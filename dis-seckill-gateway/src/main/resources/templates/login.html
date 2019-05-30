@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<!--引入thymeleaf命名空间-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>登录</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <!-- jquery：用户异步发出请求（注：@为thymeleaf的静态资源引入符） -->
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <!-- bootstrap：页面展示 -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <!-- jquery-validator：表单校验 -->
+    <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/jquery-validation/localization/messages_zh.min.js}"></script>
+    <!-- layer：弹出窗-->
+    <script type="text/javascript" th:src="@{/layer/layer.js}"></script>
+    <!-- md5.js：计算MD的js脚本-->
+    <script type="text/javascript" th:src="@{/js/md5.min.js}"></script>
+    <!-- common.js：js通用回调函数 -->
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+</head>
+
+<body>
+
+<!--表单：表单没有指定请求的url，这部分工作交给给了下文的密码处理js脚本-->
+<form name="loginForm" id="loginForm" method="post" style="width:50%; margin:0 auto">
+
+    <h2 style="text-align:center; margin-bottom: 20px">用户登录</h2>
+
+    <div class="form-group">
+        <div class="row">
+            <label class="form-label col-md-4">请输入手机号码</label>
+            <div class="col-md-5">
+                <input id="mobile" name="mobile" class="form-control" type="text" placeholder="手机号码" required="true"
+                       minlength="11" maxlength="11"/>
+            </div>
+            <div class="col-md-1">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <label class="form-label col-md-4">请输入密码</label>
+            <div class="col-md-5">
+                <input id="password" name="password" class="form-control" type="password" placeholder="密码"
+                       required="true" minlength="6" maxlength="16"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <button class="btn btn-primary btn-block" type="reset" onclick="reset()">重置</button>
+        </div>
+        <div class="col-md-5">
+            <!--login()是一个js脚本-->
+            <button class="btn btn-primary btn-block" type="submit" onclick="login()">登录</button>
+        </div>
+    </div>
+
+</form>
+
+
+<!--处理登录的js脚本，使用ajax异步发送请求完成登录-->
+<script>
+    function login() {
+        $("#loginForm").validate({
+            submitHandler: function (form) {
+                doLogin();
+                console.log("登录");
+            }
+        });
+    }
+
+    function doLogin() {
+        g_showLoading();
+
+        // 获取用户输入密码
+        var inputPass = $("#password").val();
+        // 获取salt
+        var salt = g_passsword_salt;
+        // md5+salt，与服务器端的第一次MD5规则一致
+        var str = "" + salt.charAt(0) + salt.charAt(2) + inputPass + salt.charAt(5) + salt.charAt(4);
+        var password = md5(str);
+
+        // 异步发出登录请求
+        $.ajax({
+            url: "/user/login",// 请求的资源
+            type: "POST",
+            /*post请求体中的数据*/
+            data: {
+                mobile: $("#mobile").val(),
+                password: password
+            },
+
+            // 请求成功时候的回调（data为服务端返回的json对象，其中封装的是CodeMsg对象的数据）
+            success: function (data) {
+                console.log("success");
+                layer.closeAll();
+                if (data.code == 0) {
+                    layer.msg("成功");
+                    window.location.href = "/goods/goodsList";
+                } else {
+                    layer.msg(data.msg);
+                }
+                console.log(data);// 在控制台打印json返回
+            },
+
+            // 请求失败时候的回调
+            error: function () {
+                layer.closeAll();
+            }
+        });
+    }
+</script>
+
+
+</body>
+</html>

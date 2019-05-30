@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>商品详情</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <title>商品详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- jquery -->
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+    <!-- jquery-validator -->
+    <script type="text/javascript" src="/jquery-validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/jquery-validation/localization/messages_zh.min.js"></script>
+    <!-- layer -->
+    <script type="text/javascript" src="/layer/layer.js"></script>
+    <!-- md5.js -->
+    <script type="text/javascript" src="/js/md5.min.js"></script>
+    <!-- common.js -->
+    <script type="text/javascript" src="/js/common.js"></script>
+</head>
+<body>
+
+<div class="panel panel-default" style="height:100%;background-color:rgba(222,222,222,0.8)">
+    <div class="panel-heading">秒杀商品详情</div>
+    <div class="panel-body">
+        <!--如果user为空，则表明没有登录-->
+        <span id="userTip">您还没有登录，请登陆后再操作<br/></span>
+        <span>没有收货地址的提示……</span>
+    </div>
+    <table class="table" id="goodslist">
+        <tr>
+            <td>商品名称</td>
+            <td colspan="3" id="goodsName"></td>
+        </tr>
+        <tr>
+            <td>商品图片</td>
+            <td colspan="3"><img id="goodsImg" width="200" height="200"/></td>
+        </tr>
+        <tr>
+            <td>秒杀开始时间</td>
+            <!--格式转换-->
+            <td id="startTime"></td>
+            <!--秒杀状态-->
+            <td>
+                <input type="hidden" id="remainSeconds"/>
+                <span id="miaoshaTip"></span>
+            </td>
+            <td>
+                <div class="row">
+                    <div class="form-inline">
+                        <img id="verifyCodeImg" width="80" height="32" style="display:none"
+                             onclick="refreshVerifyCode()"/>
+                        <input id="verifyCode" class="form-control" style="display:none"/>
+                        <button class="btn btn-primary" type="button" id="buyButton" onclick="getSeckillPath()">立即秒杀
+                        </button>
+                    </div>
+                </div>
+                <input type="hidden" name="goodsId" id="goodsId"/>
+            </td>
+        </tr>
+        <tr>
+            <td>商品原价</td>
+            <td colspan="3" id="goodsPrice"></td>
+        </tr>
+        <tr>
+            <td>秒杀价</td>
+            <td colspan="3" id="seckillPrice"></td>
+        </tr>
+        <tr>
+            <td>库存数量</td>
+            <td colspan="3" id="stockCount"></td>
+        </tr>
+    </table>
+</div>
+
+</body>
+
+<script>
+    /*秒杀接口隐藏*/
+    function getSeckillPath() {
+        var goodsId = $("#goodsId").val();
+        g_showLoading();
+        $.ajax({
+            url: "/miaosha/path",
+            type: "GET",
+            data: {
+                goodsId: goodsId,
+                verifyCode: $("#verifyCode").val()// 获取验证码的值
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    var path = data.data;// 获取服务端返回的秒杀地址
+                    doMiaosha(path);// 真正做秒杀的接口
+                } else {
+                    layer.msg(data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("客户端请求有误");
+            }
+        });
+    }
+
+    /*真正做秒杀的接口, path为服务端返回的秒杀接口地址*/
+    function doMiaosha(path) {
+        $.ajax({
+            url: "/miaosha/" + path + "/do_miaosha_static",
+            type: "POST",
+            data: {
+                goodsId: $("#goodsId").val()
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    //window.location.href="/order_detail.htm?orderId="+data.data.id;
+                    getMiaoshaResult($("#goodsId").val());
+                } else {
+                    layer.msg(data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("客户端请求有误");
+            }
+        });
+    }
+
+    /*获取秒杀的结果*/
+    function getMiaoshaResult(goodsId) {
+        g_showLoading();// 加载中
+        $.ajax({
+            url: "/miaosha/result",
+            type: "GET",
+            data: {
+                goodsId: $("#goodsId").val(),
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    var result = data.data;
+                    if (result < 0) {
+                        layer.msg("对不起，秒杀失败");
+                    } else if (result == 0) {// 继续轮询
+                        setTimeout(function () {
+                            getMiaoshaResult(goodsId);
+                        }, 200);// 轮询间隔200ms
+                    } else {
+                        layer.confirm("恭喜你，秒杀成功！查看订单？", {btn: ["确定", "取消"]},
+                            // 确定的回调
+                            function () {
+                                window.location.href = "/order_detail.htm?orderId=" + result;
+                            },
+                            // 取消的回调
+                            function () {
+                                layer.closeAll();
+                            });
+                    }
+                } else {
+                    layer.msg(data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("客户端请求有误");
+            }
+        });
+    }
+
+    // 使用ajax从服务端请求页面数据, 跳转到这个页面时就会执行(function有$)
+    $(function () {
+        // countDown();
+        getDetail();// 获取商品详情
+    });
+
+    function getDetail() {
+        var goodsId = g_getQueryString("goodsId");// goodsId为goods_list.html中详情url中的参数
+        $.ajax({
+            url: "/goods/getDetails/" + goodsId,
+            type: "GET",
+            success: function (data) {// data为edu.uestc.controller.GoodsListController#toDetailStatic的返回值
+                if (data.code == 0) {
+                    render(data.data);
+                } else {
+                    layer.msg(data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("客户端请求有误");
+            }
+        });
+    }
+
+    /*渲染页面*/
+    function render(detail) {
+        var seckillStatus = detail.seckillStatus;
+        var remainSeconds = detail.remainSeconds;
+        var goods = detail.goods;
+        var user = detail.user;
+        console.log(detail);
+        console.log(goods);
+        console.log(user);
+        if (!user) {
+            $("#userTip").hide();
+            // $("#userTip").innerText=new String(user.nickname);
+            console.log(user);
+        } else {
+
+        }
+
+        $("#goodsName").text(goods.goodsName);
+        $("#goodsImg").attr("src", goods.goodsImg);
+        $("#startTime").text(new Date(goods.startDate).format("yyyy-MM-dd hh:mm:ss"));
+        $("#remainSeconds").val(remainSeconds);
+        $("#goodsId").val(goods.id);
+        $("#goodsPrice").text(goods.goodsPrice);
+        $("#seckillPrice").text(goods.seckillPrice);
+        $("#stockCount").text(goods.stockCount);
+        countDown();
+    }
+
+    function countDown() {
+        var remainSeconds = $("#remainSeconds").val();
+        var timeout;
+        if (remainSeconds > 0) {//秒杀还没开始，倒计时
+            $("#buyButton").attr("disabled", true);
+            $("#miaoshaTip").html("秒杀倒计时：" + remainSeconds + "秒");
+            timeout = setTimeout(function () {
+                $("#countDown").text(remainSeconds - 1);
+                $("#remainSeconds").val(remainSeconds - 1);
+                countDown();
+            }, 1000);
+        } else if (remainSeconds == 0) {//秒杀进行中
+            $("#buyButton").attr("disabled", false);
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            $("#miaoshaTip").html("秒杀进行中");
+            // 在倒计时结束时获取验证码（使用ajax异步向服务器请求验证码图片）
+            $("#verifyCodeImg").attr("src", "/miaosha/verifyCode?goodsId=" + $("#goodsId").val());
+            $("#verifyCodeImg").show();// 从服务器加载完验证码图片后，显示出来
+            $("#verifyCode").show();
+        } else {//秒杀已经结束
+            $("#buyButton").attr("disabled", true);
+            $("#miaoshaTip").html("秒杀已经结束");
+            $("#verifyCodeImg").hide();
+            $("#verifyCode").hide();
+        }
+    }
+
+    /*点击验证码图片时，从服务器异步获取另一张验证码码图片*/
+    function refreshVerifyCode() {
+        $("#verifyCodeImg").attr("src", "/miaosha/verifyCode?goodsId=" + $("#goodsId").val() + "&timestamp=" + new Date().getTime());
+    }
+
+</script>
+
+
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seckill.dis.user.persistence.SeckillUserMapper">
+
+    <!--<resultMap type="com.seckill.dis.user.domain.SeckillUser" id="seckillUser">-->
+        <!--<result property="id" column="id"/>-->
+        <!--<result property="nickname" column="nickname"/>-->
+        <!--<result property="password" column="password"/>-->
+        <!--<result property="salt" column="salt"/>-->
+        <!--<result property="head" column="head"/>-->
+        <!--<result property="registerDate" column="register_date"/>-->
+        <!--<result property="lastLoginDate" column="last_login_date"/>-->
+        <!--<result property="loginCount" column="login_count"/>-->
+    <!--</resultMap>-->
+
+    <select id="getUserByPhone" parameterType="java.lang.Long" resultType="seckillUser">
+        SELECT *
+        FROM seckill_user
+        WHERE phone = #{phone}
+    </select>
+
+</mapper>
