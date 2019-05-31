@@ -1,5 +1,6 @@
 package com.seckill.dis.common.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Date;
  *
  * @author noodle
  */
-public class SeckillGoods {
+public class SeckillGoods implements Serializable{
 
     private Long id;
     private Long goodsId;

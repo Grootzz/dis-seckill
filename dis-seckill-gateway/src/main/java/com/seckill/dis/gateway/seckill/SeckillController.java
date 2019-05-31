@@ -100,7 +100,7 @@ public class SeckillController implements InitializingBean {
             return Result.error(CodeMsg.REQUEST_ILLEGAL);// 检验不通过，请求非法
 
         // 检验通过，获取秒杀路径
-        String path = this.createSeckillPath(user, goodsId);
+        String path = this.createSkPath(user, goodsId);
         // 向客户端回传随机生成的秒杀地址
         return Result.success(path);
     }
@@ -172,7 +172,7 @@ public class SeckillController implements InitializingBean {
         message.setGoodsId(goodsId);
 
         // 放入MQ
-        sender.sendMiaoshaMessage(message);
+        sender.sendSkMessage(message);
         return Result.success(0); // 排队中
     }
 
@@ -188,6 +188,7 @@ public class SeckillController implements InitializingBean {
     @ResponseBody
     public Result<Long> getSeckillResult(Model model, UserVo user,
                                          @RequestParam("goodsId") long goodsId) {
+
         model.addAttribute("user", user);
 
         if (user == null) {
@@ -267,7 +268,7 @@ public class SeckillController implements InitializingBean {
      * @param goodsId
      * @return
      */
-    public String createSeckillPath(UserVo user, long goodsId) {
+    public String createSkPath(UserVo user, long goodsId) {
 
         if (user == null || goodsId <= 0) {
             return null;
@@ -275,6 +276,7 @@ public class SeckillController implements InitializingBean {
 
         // 随机生成秒杀地址
         String path = MD5Util.md5(UUIDUtil.uuid() + "123456");
+//        String path = "a";
         // 将随机生成的秒杀地址存储在redis中（保证不同的用户和不同商品的秒杀地址是不一样的）
         redisService.set(SeckillKeyPrefix.seckillPath, "" + user.getUuid() + "_" + goodsId, path);
         return path;

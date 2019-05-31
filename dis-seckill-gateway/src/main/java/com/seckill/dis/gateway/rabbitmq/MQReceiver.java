@@ -65,7 +65,7 @@ public class MQReceiver {
      * @param message
      */
     @RabbitListener(queues = MQConfig.SECKILL_QUEUE)
-    public void receiveMiaoshaInfo(String message) {
+    public void receiveSkInfo(String message) {
         logger.info("MQ: message: " + message);
         SeckillMessage seckillMessage = RedisService.stringToBean(message, SeckillMessage.class);
         // 获取秒杀用户信息与商品id

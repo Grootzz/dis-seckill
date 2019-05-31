@@ -1,11 +1,13 @@
 package com.seckill.dis.common.domain;
 
+import java.io.Serializable;
+
 /**
  * seckill_order 表
  *
  * @author noodle
  */
-public class SeckillOrder {
+public class SeckillOrder implements Serializable{
 
     private Long id;
     private Long userId;
