@@ -46,6 +46,14 @@ public class SeckillServiceImpl implements SeckillServiceApi {
      */
     private char[] ops = new char[]{'+', '-', '*'};
 
+    /**
+     * 减库存，生成订单，实现秒杀操作核心业务
+     * 秒杀操作由两步构成，不可分割，为一个事务
+     *
+     * @param user  秒杀商品的用户
+     * @param goods 所秒杀的商品
+     * @return
+     */
     @Transactional
     @Override
     public OrderInfo seckill(UserVo user, GoodsVo goods) {
@@ -55,7 +63,7 @@ public class SeckillServiceImpl implements SeckillServiceApi {
             setGoodsOver(goods.getId());
             return null;
         }
-        // 2. 生成订单；向order_info表和maiosha_order表中写入订单信息
+        // 2. 生成订单；向 order_info 表和 seckill_order 表中写入订单信息
         return orderService.createOrder(user, goods);
     }
 

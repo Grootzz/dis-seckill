@@ -2,17 +2,25 @@ package com.seckill.dis.gateway.redis;
 
 
 /**
- * 模板方法的基本类
+ * key 前缀模板方法的基本类
+ *
  * @author noodle
  */
 public abstract class BaseKeyPrefix implements KeyPrefix {
 
-    int expireSeconds;// 过期时间
-    String prefix;// 前缀
+    /**
+     * 过期时间
+     */
+    int expireSeconds;
+
+    /**
+     * 前缀
+     */
+    String prefix;
 
 
     /**
-     * 默认过期时间为0，即不过期，过期时间只收到redis的缓存策略影响
+     * 默认过期时间为0，即不过期，过期时间只受到redis的缓存策略影响
      *
      * @param prefix 前缀
      */

@@ -17,12 +17,24 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(METHOD)
 public @interface AccessLimit {
 
-    // 最大请求次数的时间间隔
+    /**
+     * 两次请求的最大有效时间间隔，即视两次请求为同一状态的时间间隔
+     *
+     * @return
+     */
     int seconds();
 
-    // 最大请求次数
+    /**
+     * 最大请求次数
+     *
+     * @return
+     */
     int maxAccessCount();
 
-    // 是否㤇重新登录
+    /**
+     * 是否需要重新登录
+     *
+     * @return
+     */
     boolean needLogin() default true;
 }

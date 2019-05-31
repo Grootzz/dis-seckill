@@ -5,7 +5,7 @@ import com.seckill.dis.common.domain.SeckillOrder;
 import org.apache.ibatis.annotations.*;
 
 /**
- * seckill_order表数据访问层
+ * seckill_order 表数据访问层
  *
  * @author noodle
  */
@@ -19,10 +19,10 @@ public interface OrderMapper {
      * @return 秒杀订单信息
      */
     @Select("SELECT * FROM seckill_order WHERE user_id=#{userId} AND goods_id=#{goodsId}")
-    SeckillOrder getSeckillOrderByUserIdAndGoodsId(@Param("userId") Long userId, @Param("goodsId") long goodsId);
+    SeckillOrder getSeckillOrderByUserIdAndGoodsId(@Param("userId") long userId, @Param("goodsId") long goodsId);
 
     /**
-     * 将订单信息插入seckill_order表中
+     * 将订单信息插入 order_info 表中
      *
      * @param orderInfo 订单信息
      * @return 插入成功的订单信息id
@@ -34,7 +34,7 @@ public interface OrderMapper {
     long insert(OrderInfo orderInfo);
 
     /**
-     * 将秒杀订单信息插入到seckill_order中
+     * 将秒杀订单信息插入到 seckill_order 中
      *
      * @param seckillOrder 秒杀订单
      */

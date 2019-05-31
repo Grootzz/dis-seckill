@@ -22,7 +22,7 @@ public class CodeMsg {
     /**
      * 登录模块 5002XX
      */
-    public static CodeMsg SESSION_ERROR = new CodeMsg(500210, "Session不存在或者已经失效");
+    public static CodeMsg SESSION_ERROR = new CodeMsg(500210, "Session不存在或者已经失效，请返回登录！");
     public static CodeMsg PASSWORD_EMPTY = new CodeMsg(500211, "登录密码不能为空");
     public static CodeMsg MOBILE_EMPTY = new CodeMsg(500212, "手机号不能为空");
     public static CodeMsg MOBILE_ERROR = new CodeMsg(500213, "手机号格式错误");
@@ -42,6 +42,7 @@ public class CodeMsg {
     public static CodeMsg SECKILL_OVER = new CodeMsg(500500, "商品已经秒杀完毕");
     public static CodeMsg REPEATE_SECKILL = new CodeMsg(500501, "不能重复秒杀");
     public static CodeMsg SECKILL_FAIL = new CodeMsg(500502, "秒杀失败");
+    public static CodeMsg SECKILL_PARM_ILLEGAL = new CodeMsg(500503, "秒杀请求参数异常：%s");
 
     /**
      * 构造器定义为private是为了防止controller直接new

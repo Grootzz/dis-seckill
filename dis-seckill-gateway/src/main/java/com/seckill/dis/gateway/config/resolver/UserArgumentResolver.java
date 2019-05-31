@@ -4,7 +4,6 @@ import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.UserVo;
 import com.seckill.dis.gateway.redis.RedisService;
 import com.seckill.dis.gateway.redis.SeckillUserKeyPrefix;
-import com.seckill.dis.gateway.user.UserController;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +18,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.Enumeration;
 
 /**
  * 解析请求，并将请求的参数设置到方法参数中
@@ -30,7 +27,7 @@ import java.util.Enumeration;
 @Service
 public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static Logger logger = LoggerFactory.getLogger(UserArgumentResolver.class);
 
     /**
      * 由于需要将一个cookie对应的用户存入第三方缓存中，这里用redis，所以需要引入redis service
@@ -130,8 +127,9 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
      * @param user
      */
     private void addCookie(HttpServletResponse response, String token, UserVo user) {
-        logger.info("addCookie");
+
         redisService.set(SeckillUserKeyPrefix.token, token, user);
+
         Cookie cookie = new Cookie(UserServiceApi.COOKIE_NAME_TOKEN, token);
         cookie.setMaxAge(SeckillUserKeyPrefix.token.expireSeconds());
         cookie.setPath("/");

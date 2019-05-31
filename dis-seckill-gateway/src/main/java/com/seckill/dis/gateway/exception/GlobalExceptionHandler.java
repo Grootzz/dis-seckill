@@ -25,7 +25,7 @@ import java.util.List;
 @ResponseBody
 public class GlobalExceptionHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 异常处理
@@ -43,7 +43,6 @@ public class GlobalExceptionHandler {
         if (e instanceof GlobalException) {
             GlobalException exception = (GlobalException) e;
             return Result.error(exception.getCodeMsg());// 向客户端返回异常信息
-
         } else if (e instanceof BindException) {
             BindException bindException = (BindException) e;
             List<ObjectError> errors = bindException.getAllErrors();

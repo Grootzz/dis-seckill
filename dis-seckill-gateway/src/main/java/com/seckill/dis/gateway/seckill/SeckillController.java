@@ -69,8 +69,8 @@ public class SeckillController implements InitializingBean {
 
     /**
      * 获取秒杀接口地址
-     * 每一次点击秒杀，都会生成一个随机的秒杀地址返回给客户端
-     * 对秒杀的次数做限制（通过自定义拦截器注解完成）
+     * 1. 每一次点击秒杀，都会生成一个随机的秒杀地址返回给客户端
+     * 2. 对秒杀的次数做限制（通过自定义拦截器注解完成）
      *
      * @param model
      * @param user
@@ -78,7 +78,6 @@ public class SeckillController implements InitializingBean {
      * @param verifyCode 验证码
      * @return 被隐藏的秒杀接口路径
      */
-
     @AccessLimit(seconds = 5, maxAccessCount = 5, needLogin = true)
     @RequestMapping(value = "path", method = RequestMethod.GET)
     @ResponseBody
@@ -89,8 +88,8 @@ public class SeckillController implements InitializingBean {
         // 在执行下面的逻辑之前，会相对path请求进行拦截处理（@AccessLimit， AccessInterceptor），防止访问次数过于频繁，对服务器造成过大的压力
         model.addAttribute("user", user);
 
-        if (user == null || goodsId <= 0) {
-            return Result.error(CodeMsg.SESSION_ERROR);
+        if (goodsId <= 0) {
+            return Result.error(CodeMsg.SECKILL_PARM_ILLEGAL.fillArgs("商品id小于0"));
         }
 
         // 校验验证码
@@ -132,9 +131,6 @@ public class SeckillController implements InitializingBean {
                                      @PathVariable("path") String path) {
 
         model.addAttribute("user", user);
-        // 1. 如果用户为空，则返回登录界面
-        if (user == null)
-            return Result.error(CodeMsg.SESSION_ERROR);
 
         // 验证path是否正确
         boolean check = this.checkPath(user, goodsId, path);
@@ -186,14 +182,11 @@ public class SeckillController implements InitializingBean {
      */
     @RequestMapping(value = "result", method = RequestMethod.GET)
     @ResponseBody
-    public Result<Long> getSeckillResult(Model model, UserVo user,
+    public Result<Long> getSeckillResult(Model model,
+                                         UserVo user,
                                          @RequestParam("goodsId") long goodsId) {
 
         model.addAttribute("user", user);
-
-        if (user == null) {
-            return Result.error(CodeMsg.SESSION_ERROR);
-        }
 
         long result = seckillService.getSeckillResult(user.getUuid(), goodsId);
         return Result.success(result);
@@ -213,8 +206,9 @@ public class SeckillController implements InitializingBean {
     public Result<String> getVerifyCode(HttpServletResponse response, UserVo user,
                                         @RequestParam("goodsId") long goodsId) {
         logger.info("获取验证码");
-        if (user == null || goodsId <= 0)
+        if (user == null || goodsId <= 0) {
             return Result.error(CodeMsg.SESSION_ERROR);
+        }
 
         // 创建验证码
         try {
@@ -256,7 +250,7 @@ public class SeckillController implements InitializingBean {
             return false;
         }
 
-        // 如果校验不成功，则说明校验码过期
+        // 如果校验成功，则说明校验码过期，删除校验码缓存，防止重复提交同一个验证码
         redisService.delete(SeckillKeyPrefix.seckillVerifyCode, user.getUuid() + "," + goodsId);
         return true;
     }
@@ -298,8 +292,11 @@ public class SeckillController implements InitializingBean {
         return path.equals(oldPath);
     }
 
+    /**
+     * 服务器程序启动的时候加载商品列表信息
+     */
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
 
         List<GoodsVo> goods = goodsService.listGoodsVo();
         if (goods == null) {

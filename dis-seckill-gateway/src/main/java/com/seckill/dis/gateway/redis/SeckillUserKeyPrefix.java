@@ -2,12 +2,16 @@ package com.seckill.dis.gateway.redis;
 
 /**
  * 秒杀用户信息的key前缀
+ *
+ * @author noodle
  */
 
 public class SeckillUserKeyPrefix extends BaseKeyPrefix {
 
-
-    public static final int TOKEN_EXPIRE = 30*60;// 缓存有效时间为30min
+    /**
+     * 缓存有效时间为30min
+     */
+    public static final int TOKEN_EXPIRE = 30 * 60;
 
     public SeckillUserKeyPrefix(int expireSeconds, String prefix) {
         super(expireSeconds, prefix);

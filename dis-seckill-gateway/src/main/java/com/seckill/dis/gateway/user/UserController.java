@@ -56,6 +56,13 @@ public class UserController {
         return "login";// login页面
     }
 
+    @RequestMapping(value = "test", method = RequestMethod.GET)
+    @ResponseBody
+    public void testException(){
+        throw new GlobalException(CodeMsg.SERVER_ERROR);
+    }
+
+
     /**
      * 用户登录接口
      *
@@ -84,6 +91,7 @@ public class UserController {
         if (user == null)
             throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
         logger.info("用户：" + user.toString());
+
         // 判断手机号对应的密码是否一致
         String dbPassword = user.getPassword();
         String dbSalt = user.getSalt();
@@ -98,9 +106,9 @@ public class UserController {
         redisService.set(SeckillUserKeyPrefix.token, token, user);
         // 将token写入cookie中, 然后传给客户端（一个cookie对应一个用户，这里将这个cookie的用户信息写入redis中）
         Cookie cookie = new Cookie(UserServiceApi.COOKIE_NAME_TOKEN, token);
-        cookie.setMaxAge(SeckillUserKeyPrefix.token.expireSeconds());// 保持与redis中的session一致
+        // 保持与redis中的session一致
+        cookie.setMaxAge(SeckillUserKeyPrefix.token.expireSeconds());
         cookie.setPath("/");
-        logger.info(cookie.getPath());
         response.addCookie(cookie);
         logger.info(cookie.getName() + ": " + cookie.getValue());
         return Result.success(true);

@@ -41,6 +41,7 @@ public class GoodsServiceImpl implements GoodsServiceApi {
         return goodsMapper.getGoodsVoByGoodsId(goodsId);
     }
 
+
     @Override
     public boolean reduceStock(GoodsVo goods) {
         SeckillGoods seckillGoods = new SeckillGoods();

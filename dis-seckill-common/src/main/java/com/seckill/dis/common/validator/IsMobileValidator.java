@@ -42,10 +42,9 @@ public class IsMobileValidator implements ConstraintValidator<IsMobile, String> 
      */
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        logger.info("是否需要校验参数："+required);
+        logger.info("是否需要校验参数：" + required);
         // 如果所检验字段可以为空
         if (required) {
-            logger.info(""+ValidatorUtil.isMobile(value));
             return ValidatorUtil.isMobile(value);// 检验结果
         } else {
             if (StringUtils.isEmpty(value))

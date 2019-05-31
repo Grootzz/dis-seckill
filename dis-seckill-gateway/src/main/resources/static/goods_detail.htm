@@ -56,7 +56,7 @@
                         <img id="verifyCodeImg" width="80" height="32" style="display:none"
                              onclick="refreshVerifyCode()"/>
                         <input id="verifyCode" class="form-control" style="display:none"/>
-                        <button class="btn btn-primary" type="button" id="buyButton" onclick="getSeckillPath()">立即秒杀
+                        <button class="btn btn-primary" type="button" id="buyButton" onclick="getSkPath()">立即秒杀
                         </button>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
 
 <script>
     /*秒杀接口隐藏*/
-    function getSeckillPath() {
+    function getSkPath() {
         var goodsId = $("#goodsId").val();
         g_showLoading();
         $.ajax({

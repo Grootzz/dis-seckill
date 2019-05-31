@@ -40,6 +40,7 @@ public class GlobalExceptionHandler {
 
         // 如果所拦截的异常是自定义的全局异常，这按自定义异常的处理方式处理，否则按默认方式处理
         if (e instanceof GlobalException) {
+            logger.debug("common 模块中的异常");
             GlobalException exception = (GlobalException) e;
             return Result.error(exception.getCodeMsg());// 向客户端返回异常信息
 

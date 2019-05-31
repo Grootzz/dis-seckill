@@ -3,6 +3,7 @@ package com.seckill.dis.order.redis;
 
 /**
  * 模板方法的基本类
+ *
  * @author noodle
  */
 public abstract class BaseKeyPrefix implements KeyPrefix {

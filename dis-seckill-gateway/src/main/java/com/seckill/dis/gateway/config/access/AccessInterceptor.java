@@ -43,6 +43,7 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      * 目标方法执行前的处理
      * <p>
      * 查询访问次数，进行防刷请求拦截
+     * 在 AccessLimit#seconds() 时间内频繁访问会有次数限制
      *
      * @param request
      * @param response
@@ -57,17 +58,19 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
         // 指明拦截的是方法
         if (handler instanceof HandlerMethod) {
             logger.info("HandlerMethod: " + ((HandlerMethod) handler).getMethod().getName());
+
             UserVo user = this.getUser(request, response);// 获取用户对象
-            logger.info("user is null: " + (user == null));
+
             UserContext.setUser(user); // 保存用户到ThreadLocal，这样，同一个线程访问的是同一个用户
 
+            // 获取标注了 @AccessLimit 的方法，没有注解，则直接返回
             HandlerMethod hm = (HandlerMethod) handler;
-            // 获取标注了@AccessLimit的方法，没有注解，则直接返回
             AccessLimit accessLimit = hm.getMethodAnnotation(AccessLimit.class);
+
             // 如果没有添加@AccessLimit注解，直接放行（true）
             if (accessLimit == null)
                 return true;
-            logger.info("@AccessLimit: 处理@AccessLimit标注的方法");
+
             // 获取注解的元素值
             int seconds = accessLimit.seconds();
             int maxCount = accessLimit.maxAccessCount();
@@ -83,27 +86,29 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
             } else {
                 //do nothing
             }
-            // 设置过期时间
+            // 设置缓存过期时间
             AccessKeyPrefix accessKeyPrefix = AccessKeyPrefix.withExpire(seconds);
             // 在redis中存储的访问次数的key为请求的URI
             Integer count = redisService.get(accessKeyPrefix, key, Integer.class);
-            // 第一次重复点击秒杀
+            // 第一次重复点击 秒杀按钮
             if (count == null) {
                 redisService.set(accessKeyPrefix, key, 1);
-                // 点击次数为未达最大值
+                // 点击次数未达最大值
             } else if (count < maxCount) {
                 redisService.incr(accessKeyPrefix, key);
-                // 点击次数已满
             } else {
+                // 点击次数已满
                 this.render(response, CodeMsg.ACCESS_LIMIT_REACHED);
                 return false;
             }
         }
+        // 不是方法直接放行
         return true;
     }
 
     /**
-     * 点击次数已满后，向客户端反馈一个“频繁请求”提示信息
+     * 渲染返回信息
+     * 以 json 格式返回
      *
      * @param response
      * @param cm
@@ -143,6 +148,7 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
         }
 
         UserVo userVo = redisService.get(SeckillUserKeyPrefix.token, token, UserVo.class);
+
         // 在有效期内从redis获取到key之后，需要将key重新设置一下，从而达到延长有效期的效果
         if (userVo != null) {
             addCookie(response, token, userVo);
@@ -178,8 +184,11 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      * @param user
      */
     private void addCookie(HttpServletResponse response, String token, UserVo user) {
+
         redisService.set(SeckillUserKeyPrefix.token, token, user);
+
         Cookie cookie = new Cookie(UserServiceApi.COOKIE_NAME_TOKEN, token);
+        // 客户端cookie的有限期和缓存中的cookie有效期一致
         cookie.setMaxAge(SeckillUserKeyPrefix.token.expireSeconds());
         cookie.setPath("/");
         response.addCookie(cookie);
