@@ -28,7 +28,8 @@
     <div class="panel-heading">秒杀商品详情</div>
     <div class="panel-body">
         <!--如果user为空，则表明没有登录-->
-        <span id="userTip">您还没有登录，请登陆后再操作<br/></span>
+        <span id="userTip" style="color: black;font-size: large">您还没有登录，请登陆后再操作<br/></span>
+        <br/>
         <span>没有收货地址的提示……</span>
     </div>
     <table class="table" id="goodslist">
@@ -47,7 +48,7 @@
             <!--秒杀状态-->
             <td>
                 <input type="hidden" id="remainSeconds"/>
-                <span id="miaoshaTip"></span>
+                <span id="skTip"></span>
             </td>
             <td>
                 <div class="row">
@@ -85,16 +86,16 @@
         var goodsId = $("#goodsId").val();
         g_showLoading();
         $.ajax({
-            url: "/miaosha/path",
+            url: "/seckill/path",
             type: "GET",
             data: {
                 goodsId: goodsId,
-                verifyCode: $("#verifyCode").val()// 获取验证码的值
+                verifyCode: $("#verifyCode").val() // 获取验证码的值
             },
             success: function (data) {
                 if (data.code == 0) {
                     var path = data.data;// 获取服务端返回的秒杀地址
-                    doMiaosha(path);// 真正做秒杀的接口
+                    doSeckill(path);// 真正做秒杀的接口
                 } else {
                     layer.msg(data.msg);
                 }
@@ -106,9 +107,9 @@
     }
 
     /*真正做秒杀的接口, path为服务端返回的秒杀接口地址*/
-    function doMiaosha(path) {
+    function doSeckill(path) {
         $.ajax({
-            url: "/miaosha/" + path + "/do_miaosha_static",
+            url: "/seckill/" + path + "/doSeckill",
             type: "POST",
             data: {
                 goodsId: $("#goodsId").val()
@@ -116,7 +117,7 @@
             success: function (data) {
                 if (data.code == 0) {
                     //window.location.href="/order_detail.htm?orderId="+data.data.id;
-                    getMiaoshaResult($("#goodsId").val());
+                    getSeckillResult($("#goodsId").val());
                 } else {
                     layer.msg(data.msg);
                 }
@@ -128,10 +129,10 @@
     }
 
     /*获取秒杀的结果*/
-    function getMiaoshaResult(goodsId) {
+    function getSeckillResult(goodsId) {
         g_showLoading();// 加载中
         $.ajax({
-            url: "/miaosha/result",
+            url: "/seckill/result",
             type: "GET",
             data: {
                 goodsId: $("#goodsId").val(),
@@ -143,7 +144,7 @@
                         layer.msg("对不起，秒杀失败");
                     } else if (result == 0) {// 继续轮询
                         setTimeout(function () {
-                            getMiaoshaResult(goodsId);
+                            getSeckillResult(goodsId);
                         }, 200);// 轮询间隔200ms
                     } else {
                         layer.confirm("恭喜你，秒杀成功！查看订单？", {btn: ["确定", "取消"]},
@@ -177,7 +178,7 @@
         $.ajax({
             url: "/goods/getDetails/" + goodsId,
             type: "GET",
-            success: function (data) {// data为edu.uestc.controller.GoodsListController#toDetailStatic的返回值
+            success: function (data) {
                 if (data.code == 0) {
                     render(data.data);
                 } else {
@@ -197,14 +198,12 @@
         var goods = detail.goods;
         var user = detail.user;
         console.log(detail);
-        console.log(goods);
-        console.log(user);
-        if (!user) {
-            $("#userTip").hide();
-            // $("#userTip").innerText=new String(user.nickname);
-            console.log(user);
-        } else {
-
+        // console.log(goods);
+        // console.log(user);
+        if (user != null) {
+            // $("#userTip").hide();
+            $("#userTip").text(user.nickname+" 你好！");
+            console.log(user.nickname);
         }
 
         $("#goodsName").text(goods.goodsName);
@@ -221,27 +220,27 @@
     function countDown() {
         var remainSeconds = $("#remainSeconds").val();
         var timeout;
-        if (remainSeconds > 0) {//秒杀还没开始，倒计时
+        if (remainSeconds > 0) {// 秒杀还没开始，倒计时
             $("#buyButton").attr("disabled", true);
-            $("#miaoshaTip").html("秒杀倒计时：" + remainSeconds + "秒");
+            $("#skTip").html("秒杀倒计时：" + remainSeconds + "秒");
             timeout = setTimeout(function () {
                 $("#countDown").text(remainSeconds - 1);
                 $("#remainSeconds").val(remainSeconds - 1);
                 countDown();
             }, 1000);
-        } else if (remainSeconds == 0) {//秒杀进行中
+        } else if (remainSeconds == 0) { // 秒杀进行中
             $("#buyButton").attr("disabled", false);
             if (timeout) {
                 clearTimeout(timeout);
             }
-            $("#miaoshaTip").html("秒杀进行中");
+            $("#skTip").html("秒杀进行中");
             // 在倒计时结束时获取验证码（使用ajax异步向服务器请求验证码图片）
-            $("#verifyCodeImg").attr("src", "/miaosha/verifyCode?goodsId=" + $("#goodsId").val());
+            $("#verifyCodeImg").attr("src", "/seckill/verifyCode?goodsId=" + $("#goodsId").val());
             $("#verifyCodeImg").show();// 从服务器加载完验证码图片后，显示出来
             $("#verifyCode").show();
         } else {//秒杀已经结束
             $("#buyButton").attr("disabled", true);
-            $("#miaoshaTip").html("秒杀已经结束");
+            $("#skTip").html("秒杀已经结束");
             $("#verifyCodeImg").hide();
             $("#verifyCode").hide();
         }
@@ -249,7 +248,8 @@
 
     /*点击验证码图片时，从服务器异步获取另一张验证码码图片*/
     function refreshVerifyCode() {
-        $("#verifyCodeImg").attr("src", "/miaosha/verifyCode?goodsId=" + $("#goodsId").val() + "&timestamp=" + new Date().getTime());
+        console.log("刷新验证码");
+        $("#verifyCodeImg").attr("src", "/seckill/verifyCode?goodsId=" + $("#goodsId").val() + "&timestamp=" + new Date().getTime());
     }
 
 </script>

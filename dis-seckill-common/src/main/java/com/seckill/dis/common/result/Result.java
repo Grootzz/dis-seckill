@@ -5,12 +5,24 @@ import java.io.Serializable;
 /**
  * 用户接口返回结果
  *
+ * @param <T> 数据实体类型
  * @author noodle
  */
-public class Result<T> implements Serializable{
+public class Result<T> implements Serializable {
 
+    /**
+     * 状态码
+     */
     private int code;
+
+    /**
+     * 状态短语
+     */
     private String msg;
+
+    /**
+     * 数据实体
+     */
     private T data;
 
     /**
@@ -24,11 +36,11 @@ public class Result<T> implements Serializable{
         this.data = data;
     }
 
-    private Result(CodeMsg serverError) {
-        if (serverError == null)
+    private Result(CodeMsg codeMsg) {
+        if (codeMsg == null)
             return;
-        this.code = serverError.getCode();
-        this.msg = serverError.getMsg();
+        this.code = codeMsg.getCode();
+        this.msg = codeMsg.getMsg();
     }
 
     /**
@@ -40,17 +52,8 @@ public class Result<T> implements Serializable{
         return code;
     }
 
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public T getData() {
-        return data;
-    }
-
     /**
-     * 成功时候的调用返回结果
+     * 业务处理成功返回结果，直接返回业务数据
      *
      * @param data
      * @return
@@ -59,8 +62,15 @@ public class Result<T> implements Serializable{
         return new Result<T>(data);
     }
 
-
     public static <T> Result<T> error(CodeMsg serverError) {
         return new Result<T>(serverError);
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public T getData() {
+        return data;
     }
 }

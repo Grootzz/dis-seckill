@@ -1,8 +1,12 @@
 package com.seckill.dis.common.domain;
 
-
 import java.util.Date;
 
+/**
+ * seckill_goods
+ *
+ * @author noodle
+ */
 public class SeckillGoods {
 
     private Long id;

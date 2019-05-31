@@ -3,11 +3,11 @@ package com.seckill.dis.gateway.user;
 import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.LoginVo;
 import com.seckill.dis.common.api.user.vo.UserVo;
-import com.seckill.dis.common.exception.GlobalException;
 import com.seckill.dis.common.result.CodeMsg;
 import com.seckill.dis.common.result.Result;
 import com.seckill.dis.common.util.MD5Util;
 import com.seckill.dis.common.util.UUIDUtil;
+import com.seckill.dis.gateway.exception.GlobalException;
 import com.seckill.dis.gateway.redis.RedisService;
 import com.seckill.dis.gateway.redis.SeckillUserKeyPrefix;
 import org.apache.dubbo.config.annotation.Reference;
@@ -31,6 +31,10 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/user/")
 public class UserController {
+    /**
+     * 日志记录：Logger是由slf4j接口规范创建的，对象有具体的实现类创建
+     */
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Reference(interfaceClass = UserServiceApi.class)
     UserServiceApi userService;
@@ -40,12 +44,6 @@ public class UserController {
      */
     @Autowired
     RedisService redisService;
-
-    /**
-     * 日志记录：Logger是由slf4j接口规范创建的，对象有具体的实现类创建
-     */
-    private static Logger logger = LoggerFactory.getLogger(UserController.class);
-
 
     /**
      * 首页
@@ -85,7 +83,7 @@ public class UserController {
         UserVo user = this.getUserVo(Long.parseLong(phone));
         if (user == null)
             throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
-        logger.info("用户："+user.toString());
+        logger.info("用户：" + user.toString());
         // 判断手机号对应的密码是否一致
         String dbPassword = user.getPassword();
         String dbSalt = user.getSalt();
@@ -102,10 +100,14 @@ public class UserController {
         Cookie cookie = new Cookie(UserServiceApi.COOKIE_NAME_TOKEN, token);
         cookie.setMaxAge(SeckillUserKeyPrefix.token.expireSeconds());// 保持与redis中的session一致
         cookie.setPath("/");
+        logger.info(cookie.getPath());
         response.addCookie(cookie);
-        logger.info("cookie："+token);
+        logger.info(cookie.getName() + ": " + cookie.getValue());
         return Result.success(true);
     }
+
+
+
 
     public void register() {
         return;

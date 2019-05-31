@@ -10,6 +10,8 @@ import com.seckill.dis.gateway.redis.RedisService;
 import com.seckill.dis.gateway.redis.SeckillUserKeyPrefix;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.method.HandlerMethod;
@@ -19,14 +21,17 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
+import java.util.Enumeration;
 
 /**
- * 用户访问拦截器，限制用户对某一个接口的频繁访问
+ * 用户访问拦截器
  *
  * @author noodle
  */
 @Service
 public class AccessInterceptor extends HandlerInterceptorAdapter {
+
+    private static Logger logger = LoggerFactory.getLogger(AccessInterceptor.class);
 
     @Reference(interfaceClass = UserServiceApi.class)
     UserServiceApi userService;
@@ -47,19 +52,22 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        logger.info(request.getRequestURL() + " 拦截请求");
 
         // 指明拦截的是方法
         if (handler instanceof HandlerMethod) {
+            logger.info("HandlerMethod: " + ((HandlerMethod) handler).getMethod().getName());
             UserVo user = this.getUser(request, response);// 获取用户对象
-            UserContext.setUser(user);// 保存用户到ThreadLocal，这样，同一个线程访问的是同一个用户
+            logger.info("user is null: " + (user == null));
+            UserContext.setUser(user); // 保存用户到ThreadLocal，这样，同一个线程访问的是同一个用户
+
             HandlerMethod hm = (HandlerMethod) handler;
             // 获取标注了@AccessLimit的方法，没有注解，则直接返回
             AccessLimit accessLimit = hm.getMethodAnnotation(AccessLimit.class);
             // 如果没有添加@AccessLimit注解，直接放行（true）
-            if (accessLimit == null) {
+            if (accessLimit == null)
                 return true;
-            }
-
+            logger.info("@AccessLimit: 处理@AccessLimit标注的方法");
             // 获取注解的元素值
             int seconds = accessLimit.seconds();
             int maxCount = accessLimit.maxAccessCount();
@@ -111,25 +119,29 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
     }
 
     /**
-     * 和UserArgumentResolver功能类似，用于解析拦截的请求，获取 UserVo 对象
+     * 和 UserArgumentResolver 功能类似，用于解析拦截的请求，获取 UserVo 对象
      *
      * @param request
      * @param response
      * @return UserVo 对象
      */
     private UserVo getUser(HttpServletRequest request, HttpServletResponse response) {
+        logger.info(request.getRequestURL() + " 获取 UserVo 对象");
 
         // 从请求中获取token
         String paramToken = request.getParameter(UserServiceApi.COOKIE_NAME_TOKEN);
         String cookieToken = getCookieValue(request, UserServiceApi.COOKIE_NAME_TOKEN);
+
         if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
             return null;
         }
+
         String token = StringUtils.isEmpty(paramToken) ? cookieToken : paramToken;
 
         if (StringUtils.isEmpty(token)) {
             return null;
         }
+
         UserVo userVo = redisService.get(SeckillUserKeyPrefix.token, token, UserVo.class);
         // 在有效期内从redis获取到key之后，需要将key重新设置一下，从而达到延长有效期的效果
         if (userVo != null) {
@@ -142,16 +154,16 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      * 从众多的cookie中找出指定cookiName的cookie
      *
      * @param request
-     * @param cookiName
+     * @param cookieName
      * @return cookiName对应的value
      */
-    private String getCookieValue(HttpServletRequest request, String cookiName) {
+    private String getCookieValue(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
-        if (cookies == null || cookies.length <= 0) {
+        if (cookies == null || cookies.length == 0)
             return null;
-        }
+
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(cookiName)) {
+            if (cookie.getName().equals(cookieName)) {
                 return cookie.getValue();
             }
         }
@@ -172,5 +184,4 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
         cookie.setPath("/");
         response.addCookie(cookie);
     }
-
 }

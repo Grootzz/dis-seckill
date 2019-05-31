@@ -49,6 +49,7 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        logger.info("添加请求拦截器");
         registry.addInterceptor(accessInterceptor);
     }
 }

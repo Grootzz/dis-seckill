@@ -2,6 +2,8 @@ package com.seckill.dis.common.exception;
 
 import com.seckill.dis.common.result.CodeMsg;
 import com.seckill.dis.common.result.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -22,6 +24,8 @@ import java.util.List;
 @ResponseBody
 public class GlobalExceptionHandler {
 
+    private static Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     /**
      * 异常处理
      *
@@ -31,7 +35,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = Exception.class)// 这个注解用指定这个方法对何种异常处理（这里默认所有异常都用这个方法处理）
     public Result<String> exceptionHandler(HttpServletRequest request, Exception e) {
-
+        logger.info("出现异常");
         e.printStackTrace();// 打印原始的异常信息，方便调试
 
         // 如果所拦截的异常是自定义的全局异常，这按自定义异常的处理方式处理，否则按默认方式处理
