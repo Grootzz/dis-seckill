@@ -38,7 +38,6 @@ public class MQReceiver {
     @Autowired
     RedisService redisService;
 
-    //    @RabbitHandler
     @RabbitListener(queues = {MQConfig.QUEUE})
     public void receive(String message) {
         logger.info("MQ: message: " + message);
@@ -60,7 +59,7 @@ public class MQReceiver {
     }
 
     /**
-     * 处理收到的秒杀成功信息
+     * 处理收到的秒杀成功信息（核心业务实现）
      *
      * @param message
      */
@@ -75,22 +74,24 @@ public class MQReceiver {
         // 获取商品的库存
         GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
         Integer stockCount = goods.getStockCount();
-        if (stockCount <= 0)
+        if (stockCount <= 0) {
             return;
+        }
 
         // 判断是否已经秒杀到了
         SeckillOrder order = this.getSeckillOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
-        if (order != null)
+        if (order != null) {
             return;
+        }
 
         // 减库存 下订单 写入秒杀订单
         seckillService.seckill(user, goods);
     }
 
     /**
-     * 通过用户id与商品id从订单列表中获取订单信息，这个地方用到了唯一索引（unique index!!!!!）
+     * 通过用户id与商品id从订单列表中获取订单信息，这个地方用了唯一索引（unique index!!!!!）
      * <p>
-     * c5: 优化，不同每次都去数据库中读取秒杀订单信息，而是在第一次生成秒杀订单成功后，
+     * 优化，不同每次都去数据库中读取秒杀订单信息，而是在第一次生成秒杀订单成功后，
      * 将订单存储在redis中，再次读取订单信息的时候就直接从redis中读取
      *
      * @param userId

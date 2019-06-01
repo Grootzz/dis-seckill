@@ -56,13 +56,6 @@ public class UserController {
         return "login";// login页面
     }
 
-    @RequestMapping(value = "test", method = RequestMethod.GET)
-    @ResponseBody
-    public void testException(){
-        throw new GlobalException(CodeMsg.SERVER_ERROR);
-    }
-
-
     /**
      * 用户登录接口
      *
@@ -113,7 +106,6 @@ public class UserController {
         logger.info(cookie.getName() + ": " + cookie.getValue());
         return Result.success(true);
     }
-
 
     public void register() {
         return;

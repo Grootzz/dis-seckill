@@ -43,11 +43,17 @@
             <td th:text="${goods.stockCount}"></td>
             <!--<td><a th:href="'/goods/to_detail/'+${goods.id}">详情</a></td>-->
             <!--静态化详情页面-->
-            <td><a th:href="'/goods_detail.htm?goodsId='+${goods.id}">详情</a></td>
+            <!--<td><a th:href="'/goods_detail.htm?goodsId='+${goods.id}">详情</a></td>-->
+            <td>
+                <a th:href="'/goods_detail.htm?goodsId='+${goods.id}">
+                    <button class="btn btn-primary" type="button" id="buyButton">详情</button>
+                </a>
+            </td>
         </tr>
     </table>
 </div>
 
-
 </body>
+
+
 </html>
