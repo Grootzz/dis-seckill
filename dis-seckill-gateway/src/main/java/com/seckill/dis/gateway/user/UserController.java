@@ -1,25 +1,17 @@
 package com.seckill.dis.gateway.user;
 
+import com.seckill.dis.common.api.cache.RedisServiceApi;
 import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.LoginVo;
-import com.seckill.dis.common.api.user.vo.UserVo;
-import com.seckill.dis.common.result.CodeMsg;
 import com.seckill.dis.common.result.Result;
-import com.seckill.dis.common.util.MD5Util;
-import com.seckill.dis.common.util.UUIDUtil;
-import com.seckill.dis.gateway.exception.GlobalException;
-import com.seckill.dis.gateway.redis.RedisService;
-import com.seckill.dis.gateway.redis.SeckillUserKeyPrefix;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -42,8 +34,8 @@ public class UserController {
     /**
      * 由于需要将一个cookie对应的用户存入第三方缓存中，这里用redis，所以需要引入redis serice
      */
-    @Autowired
-    RedisService redisService;
+//    @Reference(interfaceClass = RedisServiceApi.class)
+//    RedisServiceApi redisService;
 
     /**
      * 首页

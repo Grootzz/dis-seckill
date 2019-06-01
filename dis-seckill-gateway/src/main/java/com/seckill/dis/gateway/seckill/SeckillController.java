@@ -1,6 +1,8 @@
 package com.seckill.dis.gateway.seckill;
 
 import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix;
+import com.seckill.dis.common.api.cache.vo.OrderKeyPrefix;
 import com.seckill.dis.common.api.cache.vo.SkKeyPrefix;
 import com.seckill.dis.common.api.goods.GoodsServiceApi;
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
@@ -17,9 +19,6 @@ import com.seckill.dis.common.util.VerifyCodeUtil;
 import com.seckill.dis.gateway.config.access.AccessLimit;
 import com.seckill.dis.gateway.rabbitmq.MQSender;
 import com.seckill.dis.gateway.rabbitmq.SeckillMessage;
-import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix;
-import com.seckill.dis.common.api.cache.vo.OrderKeyPrefix;
-import com.seckill.dis.gateway.redis.SeckillKeyPrefix;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

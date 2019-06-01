@@ -1,10 +1,12 @@
 package com.seckill.dis.common.api.cache.vo;
 
+import java.io.Serializable;
+
 /**
  * 秒杀用户信息的key前缀
  */
 
-public class SkUserKeyPrefix extends BaseKeyPrefix {
+public class SkUserKeyPrefix extends BaseKeyPrefix  implements Serializable {
 
     public static final int TOKEN_EXPIRE = 30*60;// 缓存有效时间为30min
 

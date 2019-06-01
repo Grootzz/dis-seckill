@@ -1,11 +1,13 @@
 package com.seckill.dis.common.api.cache.vo;
 
+import java.io.Serializable;
+
 /**
  * 存储订单的key前缀
  *
  * @author noodle
  */
-public class OrderKeyPrefix extends BaseKeyPrefix {
+public class OrderKeyPrefix extends BaseKeyPrefix  implements Serializable {
 
     public OrderKeyPrefix(int expireSeconds, String prefix) {
         super(expireSeconds, prefix);

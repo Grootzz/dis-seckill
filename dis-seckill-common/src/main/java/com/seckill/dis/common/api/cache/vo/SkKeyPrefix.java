@@ -1,10 +1,12 @@
 package com.seckill.dis.common.api.cache.vo;
 
 
+import java.io.Serializable;
+
 /**
  * 判断秒杀状态的key前缀
  */
-public class SkKeyPrefix extends BaseKeyPrefix {
+public class SkKeyPrefix extends BaseKeyPrefix implements Serializable {
     public SkKeyPrefix(String prefix) {
         super(prefix);
     }

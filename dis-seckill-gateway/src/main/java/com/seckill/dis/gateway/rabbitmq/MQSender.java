@@ -1,6 +1,6 @@
 package com.seckill.dis.gateway.rabbitmq;
 
-import com.seckill.dis.gateway.redis.RedisService;
+import com.seckill.dis.common.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -24,7 +24,7 @@ public class MQSender {
     AmqpTemplate amqpTemplate;
 
     public void send(Object message) {
-        String msg = RedisService.beanToString(message);
+        String msg = JsonUtil.beanToString(message);
         logger.info("MQ send message: " + msg);
         // 第一个参数为消息队列名，第二个参数为发送的消息
         amqpTemplate.convertAndSend(MQConfig.QUEUE, msg);
@@ -37,7 +37,7 @@ public class MQSender {
      * @param message
      */
     public void sendTopic(Object message) {
-        String msg = RedisService.beanToString(message);
+        String msg = JsonUtil.beanToString(message);
         logger.info("Send topic message: " + msg);
         // 将消息投递到topic exchange
         amqpTemplate.convertAndSend(MQConfig.TOPIC_EXCHANGE, "topic.key1", msg + "1");
@@ -50,7 +50,7 @@ public class MQSender {
      * @param message
      */
     public void sendFanout(Object message) {
-        String msg = RedisService.beanToString(message);
+        String msg = JsonUtil.beanToString(message);
         logger.info("Send fanout message: " + msg);
         amqpTemplate.convertAndSend(MQConfig.FANOUT_EXCHANGE, "", msg);
     }
@@ -61,7 +61,7 @@ public class MQSender {
      * @param message
      */
     public void sendHeader(Object message) {
-        String msg = RedisService.beanToString(message);
+        String msg = JsonUtil.beanToString(message);
         logger.info("Send fanout message:" + msg);
         MessageProperties properties = new MessageProperties();
         properties.setHeader("header1", "value1");
@@ -76,7 +76,7 @@ public class MQSender {
      * @param message
      */
     public void sendSkMessage(SeckillMessage message) {
-        String msg = RedisService.beanToString(message);
+        String msg = JsonUtil.beanToString(message);
         logger.info("MQ send message: " + msg);
         // 第一个参数为消息队列名，第二个参数为发送的消息
         amqpTemplate.convertAndSend(MQConfig.SECKILL_QUEUE, msg);

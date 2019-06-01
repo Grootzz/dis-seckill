@@ -1,11 +1,13 @@
 package com.seckill.dis.common.api.cache.vo;
 
+import java.io.Serializable;
+
 /**
  * 访问次数的key前缀
  *
  * @author noodle
  */
-public class AccessKeyPrefix extends BaseKeyPrefix {
+public class AccessKeyPrefix extends BaseKeyPrefix implements Serializable{
     public AccessKeyPrefix(String prefix) {
         super(prefix);
     }

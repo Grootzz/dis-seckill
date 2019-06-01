@@ -8,7 +8,7 @@ import com.seckill.dis.common.api.order.OrderServiceApi;
 import com.seckill.dis.common.api.seckill.SeckillServiceApi;
 import com.seckill.dis.common.api.user.vo.UserVo;
 import com.seckill.dis.common.domain.SeckillOrder;
-import com.seckill.dis.gateway.redis.RedisService;
+import com.seckill.dis.common.util.JsonUtil;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +66,7 @@ public class MQReceiver {
     @RabbitListener(queues = MQConfig.SECKILL_QUEUE)
     public void receiveSkInfo(String message) {
         logger.info("MQ: message: " + message);
-        SeckillMessage seckillMessage = RedisService.stringToBean(message, SeckillMessage.class);
+        SeckillMessage seckillMessage = JsonUtil.stringToBean(message, SeckillMessage.class);
         // 获取秒杀用户信息与商品id
         UserVo user = seckillMessage.getUser();
         long goodsId = seckillMessage.getGoodsId();

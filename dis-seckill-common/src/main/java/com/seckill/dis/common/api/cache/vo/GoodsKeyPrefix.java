@@ -1,12 +1,14 @@
 package com.seckill.dis.common.api.cache.vo;
 
 
+import java.io.Serializable;
+
 /**
  * redis中，用于商品信息的key
  *
  * @author noodle
  */
-public class GoodsKeyPrefix extends BaseKeyPrefix {
+public class GoodsKeyPrefix extends BaseKeyPrefix  implements Serializable {
     public GoodsKeyPrefix(int expireSeconds, String prefix) {
         super(expireSeconds, prefix);
     }
