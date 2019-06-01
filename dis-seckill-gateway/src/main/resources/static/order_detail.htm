@@ -53,8 +53,11 @@
         </tr>
         <tr>
             <td>收货人</td>
-
-            <td colspan="2">XXX 18812341234</td>
+            <td colspan="2" id="username"></td>
+        </tr>
+        <tr>
+            <td>联系方式</td>
+            <td colspan="2" id="phone"></td>
         </tr>
         <tr>
             <td>收货地址</td>
@@ -69,30 +72,6 @@
 </html>
 
 <script>
-    function render(detail) {
-        var goods = detail.goods;
-        var order = detail.order;
-        $("#goodsName").text(goods.goodsName);
-        $("#goodsImg").attr("src", goods.goodsImg);
-        $("#orderPrice").text(order.goodsPrice);
-        $("#createDate").text(new Date(order.createDate).format("yyyy-MM-dd hh:mm:ss"));
-        var status = "";
-        if (order.status == 0) {
-            status = "未支付"
-        } else if (order.status == 1) {
-            status = "待发货";
-        } else if (order.status == 2) {
-            status = "已发货";
-        } else if (order.status == 3) {
-            status = "已收货";
-        } else if (order.status == 4) {
-            status = "已退款";
-        } else if (order.status == 5) {
-            status = "已完成";
-        }
-        $("#orderStatus").text(status);
-    }
-
     // 这个函数在跳转到这个页面时立即执行
     $(function () {
         getOrderDetail();
@@ -118,6 +97,33 @@
                 layer.msg("客户端请求有误");
             }
         });
+    }
+
+    function render(detail) {
+        var goods = detail.goods;
+        var order = detail.order;
+        var user = detail.user;
+        $("#goodsName").text(goods.goodsName);
+        $("#goodsImg").attr("src", goods.goodsImg);
+        $("#orderPrice").text(order.goodsPrice);
+        $("#createDate").text(new Date(order.createDate).format("yyyy-MM-dd hh:mm:ss"));
+        $("#username").text(user.nickname);
+        $("#phone").text(user.phone);
+        var status = "";
+        if (order.status == 0) {
+            status = "未支付"
+        } else if (order.status == 1) {
+            status = "待发货";
+        } else if (order.status == 2) {
+            status = "已发货";
+        } else if (order.status == 3) {
+            status = "已收货";
+        } else if (order.status == 4) {
+            status = "已退款";
+        } else if (order.status == 5) {
+            status = "已完成";
+        }
+        $("#orderStatus").text(status);
     }
 
 </script>
