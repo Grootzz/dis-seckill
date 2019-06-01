@@ -17,6 +17,7 @@
         <module>dis-seckill-gateway</module>
         <module>dis-seckill-goods</module>
         <module>dis-seckill-order</module>
+        <module>dis-seckill-cache</module>
     </modules>
 
 
