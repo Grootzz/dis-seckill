@@ -13,8 +13,13 @@ public class SkUserKeyPrefix extends BaseKeyPrefix {
     }
 
     public static SkUserKeyPrefix token = new SkUserKeyPrefix(TOKEN_EXPIRE, "token");
+    /**
+     * 用户cookie
+     */
     public static SkUserKeyPrefix TOKEN = new SkUserKeyPrefix(TOKEN_EXPIRE, "token");
-    // 用于存储用户对象到redis的key前缀
+    /**
+     * 用于存储用户对象到redis的key前缀
+     */
     public static SkUserKeyPrefix getSeckillUserById = new SkUserKeyPrefix(0, "id");
     public static SkUserKeyPrefix SK_USER_PHONE = new SkUserKeyPrefix(0, "id");
 

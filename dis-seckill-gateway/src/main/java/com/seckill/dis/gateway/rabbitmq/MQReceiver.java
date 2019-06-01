@@ -1,18 +1,18 @@
 package com.seckill.dis.gateway.rabbitmq;
 
+import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.OrderKeyPrefix;
 import com.seckill.dis.common.api.goods.GoodsServiceApi;
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
 import com.seckill.dis.common.api.order.OrderServiceApi;
 import com.seckill.dis.common.api.seckill.SeckillServiceApi;
 import com.seckill.dis.common.api.user.vo.UserVo;
 import com.seckill.dis.common.domain.SeckillOrder;
-import com.seckill.dis.gateway.redis.OrderKeyPrefix;
 import com.seckill.dis.gateway.redis.RedisService;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,8 +35,8 @@ public class MQReceiver {
     @Reference(interfaceClass = SeckillServiceApi.class)
     SeckillServiceApi seckillService;
 
-    @Autowired
-    RedisService redisService;
+    @Reference(interfaceClass = RedisServiceApi.class)
+    RedisServiceApi redisService;
 
     @RabbitListener(queues = {MQConfig.QUEUE})
     public void receive(String message) {
@@ -101,7 +101,7 @@ public class MQReceiver {
     private SeckillOrder getSeckillOrderByUserIdAndGoodsId(Long userId, long goodsId) {
 
         // 从redis中取缓存，减少数据库的访问
-        SeckillOrder seckillOrder = redisService.get(OrderKeyPrefix.getSeckillOrderByUidGid, ":" + userId + "_" + goodsId, SeckillOrder.class);
+        SeckillOrder seckillOrder = redisService.get(OrderKeyPrefix.SK_ORDER, ":" + userId + "_" + goodsId, SeckillOrder.class);
         if (seckillOrder != null) {
             return seckillOrder;
         }

@@ -1,12 +1,12 @@
 package com.seckill.dis.gateway.goods;
 
+import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix;
 import com.seckill.dis.common.api.goods.GoodsServiceApi;
 import com.seckill.dis.common.api.goods.vo.GoodsDetailVo;
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
 import com.seckill.dis.common.api.user.vo.UserVo;
 import com.seckill.dis.common.result.Result;
-import com.seckill.dis.gateway.redis.GoodsKeyPrefix;
-import com.seckill.dis.gateway.redis.RedisService;
 import com.seckill.dis.gateway.user.UserController;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
@@ -37,8 +37,8 @@ public class GoodsController {
 
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @Autowired
-    RedisService redisService;
+    @Reference(interfaceClass = RedisServiceApi.class)
+    RedisServiceApi redisService;
 
     @Reference(interfaceClass = GoodsServiceApi.class)
     GoodsServiceApi goodsService;
@@ -73,7 +73,7 @@ public class GoodsController {
         logger.info("获取商品列表");
 
         // 1. 从redis缓存中取html
-        String html = redisService.get(GoodsKeyPrefix.goodsListKeyPrefix, "", String.class);
+        String html = redisService.get(GoodsKeyPrefix.GOODS_LIST_HTML, "", String.class);
         if (!StringUtils.isEmpty(html))
             return html;
 
@@ -89,7 +89,7 @@ public class GoodsController {
         html = thymeleafViewResolver.getTemplateEngine().process("goods_list", webContext);
 
         if (!StringUtils.isEmpty(html)) // 如果html文件不为空，则将页面缓存在redis中
-            redisService.set(GoodsKeyPrefix.goodsListKeyPrefix, "", html);
+            redisService.set(GoodsKeyPrefix.GOODS_LIST_HTML, "", html);
 
         return html;
     }

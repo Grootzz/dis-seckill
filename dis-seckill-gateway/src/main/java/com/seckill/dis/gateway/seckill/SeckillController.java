@@ -1,5 +1,7 @@
 package com.seckill.dis.gateway.seckill;
 
+import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.SkKeyPrefix;
 import com.seckill.dis.common.api.goods.GoodsServiceApi;
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
 import com.seckill.dis.common.api.order.OrderServiceApi;
@@ -15,9 +17,8 @@ import com.seckill.dis.common.util.VerifyCodeUtil;
 import com.seckill.dis.gateway.config.access.AccessLimit;
 import com.seckill.dis.gateway.rabbitmq.MQSender;
 import com.seckill.dis.gateway.rabbitmq.SeckillMessage;
-import com.seckill.dis.gateway.redis.GoodsKeyPrefix;
-import com.seckill.dis.gateway.redis.OrderKeyPrefix;
-import com.seckill.dis.gateway.redis.RedisService;
+import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix;
+import com.seckill.dis.common.api.cache.vo.OrderKeyPrefix;
 import com.seckill.dis.gateway.redis.SeckillKeyPrefix;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
@@ -47,8 +48,8 @@ public class SeckillController implements InitializingBean {
 
     private static Logger logger = LoggerFactory.getLogger(SeckillController.class);
 
-    @Autowired
-    RedisService redisService;
+    @Reference(interfaceClass = RedisServiceApi.class)
+    RedisServiceApi redisService;
 
     @Reference(interfaceClass = GoodsServiceApi.class)
     GoodsServiceApi goodsService;
@@ -144,7 +145,7 @@ public class SeckillController implements InitializingBean {
             return Result.error(CodeMsg.SECKILL_OVER);
 
         // 预减库存
-        Long stock = redisService.decr(GoodsKeyPrefix.seckillGoodsStockPrefix, "" + goodsId);
+        Long stock = redisService.decr(GoodsKeyPrefix.GOODS_STOCK, "" + goodsId);
         if (stock < 0) {
             localOverMap.put(goodsId, true);// 秒杀结束。标记该商品已经秒杀结束
             return Result.error(CodeMsg.SECKILL_OVER);
@@ -152,7 +153,7 @@ public class SeckillController implements InitializingBean {
 
         // 判断是否重复秒杀
         // 从redis中取缓存，减少数据库的访问
-        SeckillOrder order = redisService.get(OrderKeyPrefix.getSeckillOrderByUidGid, ":" + user.getUuid() + "_" + goodsId, SeckillOrder.class);
+        SeckillOrder order = redisService.get(OrderKeyPrefix.SK_ORDER, ":" + user.getUuid() + "_" + goodsId, SeckillOrder.class);
         // 如果缓存中不存该数据，则从数据库中取
         if (order == null) {
             order = orderService.getSeckillOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
@@ -169,7 +170,8 @@ public class SeckillController implements InitializingBean {
 
         // 放入MQ
         sender.sendSkMessage(message);
-        return Result.success(0); // 排队中
+        // 排队中
+        return Result.success(0);
     }
 
     /**
@@ -216,7 +218,7 @@ public class SeckillController implements InitializingBean {
             VerifyCodeVo verifyCode = VerifyCodeUtil.createVerifyCode();
 
             // 验证码结果预先存到redis中
-            redisService.set(SeckillKeyPrefix.seckillVerifyCode, user.getUuid() + "," + goodsId, verifyCode.getExpResult());
+            redisService.set(SkKeyPrefix.VERIFY_RESULT, user.getUuid() + "_" + goodsId, verifyCode.getExpResult());
             ServletOutputStream out = response.getOutputStream();
             // 将图片写入到resp对象中
             ImageIO.write(verifyCode.getImage(), "JPEG", out);
@@ -245,13 +247,13 @@ public class SeckillController implements InitializingBean {
         }
 
         // 从redis中获取验证码计算结果
-        Integer oldCode = redisService.get(SeckillKeyPrefix.seckillVerifyCode, user.getUuid() + "," + goodsId, Integer.class);
+        Integer oldCode = redisService.get(SkKeyPrefix.VERIFY_RESULT, user.getUuid() + "_" + goodsId, Integer.class);
         if (oldCode == null || oldCode - verifyCode != 0) {// !!!!!!
             return false;
         }
 
         // 如果校验成功，则说明校验码过期，删除校验码缓存，防止重复提交同一个验证码
-        redisService.delete(SeckillKeyPrefix.seckillVerifyCode, user.getUuid() + "," + goodsId);
+        redisService.delete(SkKeyPrefix.VERIFY_RESULT, user.getUuid() + "_" + goodsId);
         return true;
     }
 
@@ -272,7 +274,7 @@ public class SeckillController implements InitializingBean {
         String path = MD5Util.md5(UUIDUtil.uuid() + "123456");
 //        String path = "a";
         // 将随机生成的秒杀地址存储在redis中（保证不同的用户和不同商品的秒杀地址是不一样的）
-        redisService.set(SeckillKeyPrefix.seckillPath, "" + user.getUuid() + "_" + goodsId, path);
+        redisService.set(SkKeyPrefix.SK_PATH, "" + user.getUuid() + "_" + goodsId, path);
         return path;
     }
 
@@ -288,7 +290,7 @@ public class SeckillController implements InitializingBean {
         if (user == null || path == null)
             return false;
         // 从redis中读取出秒杀的path变量是否为本次秒杀操作执行前写入redis中的path
-        String oldPath = redisService.get(SeckillKeyPrefix.seckillPath, "" + user.getUuid() + "_" + goodsId, String.class);
+        String oldPath = redisService.get(SkKeyPrefix.SK_PATH, "" + user.getUuid() + "_" + goodsId, String.class);
         return path.equals(oldPath);
     }
 
@@ -305,8 +307,9 @@ public class SeckillController implements InitializingBean {
 
         // 将商品的库存信息存储在redis中
         for (GoodsVo good : goods) {
-            redisService.set(GoodsKeyPrefix.seckillGoodsStockPrefix, "" + good.getId(), good.getStockCount());
-            localOverMap.put(good.getId(), false); // 在系统启动时，标记库存不为空
+            redisService.set(com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix.GOODS_STOCK, "" + good.getId(), good.getStockCount());
+            // 在系统启动时，标记库存不为空
+            localOverMap.put(good.getId(), false);
         }
     }
 }

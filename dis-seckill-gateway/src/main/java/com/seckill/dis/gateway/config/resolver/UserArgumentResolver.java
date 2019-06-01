@@ -1,13 +1,13 @@
 package com.seckill.dis.gateway.config.resolver;
 
+import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.SkUserKeyPrefix;
 import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.UserVo;
-import com.seckill.dis.gateway.redis.RedisService;
-import com.seckill.dis.gateway.redis.SeckillUserKeyPrefix;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -32,8 +32,8 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     /**
      * 由于需要将一个cookie对应的用户存入第三方缓存中，这里用redis，所以需要引入redis service
      */
-    @Autowired
-    RedisService redisService;
+    @Reference(interfaceClass = RedisServiceApi.class)
+    RedisServiceApi redisService;
 
     /**
      * 当请求参数为 UserVo 时，使用这个解析器处理
@@ -52,7 +52,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * 获取 UserVo 对象
+     * 从分布式session中获取 UserVo 对象
      *
      * @param methodParameter
      * @param modelAndViewContainer
@@ -70,7 +70,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
         // 获取请求和响应对象
         HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
-        logger.info(request.getRequestURL()+" resolveArgument");
+        logger.info(request.getRequestURL() + " resolveArgument");
 
         // 从请求对象中获取token（token可能有两种方式从客户端返回，1：通过url的参数，2：通过set-Cookie字段）
         String paramToken = request.getParameter(UserServiceApi.COOKIE_NAME_TOKEN);
@@ -86,7 +86,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
             return null;
 
         // 通过token就可以在redis中查出该token对应的用户对象
-        UserVo userVo = redisService.get(SeckillUserKeyPrefix.token, token, UserVo.class);
+        UserVo userVo = redisService.get(SkUserKeyPrefix.TOKEN, token, UserVo.class);
         logger.info("获取userVo：" + userVo.toString());
         // 在有效期内从redis获取到key之后，需要将key重新设置一下，从而达到延长有效期的效果
         if (userVo != null) {
@@ -128,10 +128,10 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
      */
     private void addCookie(HttpServletResponse response, String token, UserVo user) {
 
-        redisService.set(SeckillUserKeyPrefix.token, token, user);
+        redisService.set(SkUserKeyPrefix.TOKEN, token, user);
 
         Cookie cookie = new Cookie(UserServiceApi.COOKIE_NAME_TOKEN, token);
-        cookie.setMaxAge(SeckillUserKeyPrefix.token.expireSeconds());
+        cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());
         cookie.setPath("/");
         response.addCookie(cookie);
     }

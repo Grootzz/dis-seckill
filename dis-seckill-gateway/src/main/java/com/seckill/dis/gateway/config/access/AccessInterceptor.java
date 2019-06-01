@@ -1,18 +1,17 @@
 package com.seckill.dis.gateway.config.access;
 
 import com.alibaba.fastjson.JSON;
+import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.AccessKeyPrefix;
+import com.seckill.dis.common.api.cache.vo.SkUserKeyPrefix;
 import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.UserVo;
 import com.seckill.dis.common.result.CodeMsg;
 import com.seckill.dis.common.result.Result;
-import com.seckill.dis.gateway.redis.AccessKeyPrefix;
-import com.seckill.dis.gateway.redis.RedisService;
-import com.seckill.dis.gateway.redis.SeckillUserKeyPrefix;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -21,7 +20,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
-import java.util.Enumeration;
 
 /**
  * 用户访问拦截器
@@ -36,8 +34,8 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
     @Reference(interfaceClass = UserServiceApi.class)
     UserServiceApi userService;
 
-    @Autowired
-    RedisService redisService;
+    @Reference(interfaceClass = RedisServiceApi.class)
+    RedisServiceApi redisService;
 
     /**
      * 目标方法执行前的处理
@@ -58,10 +56,10 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
         // 指明拦截的是方法
         if (handler instanceof HandlerMethod) {
             logger.info("HandlerMethod: " + ((HandlerMethod) handler).getMethod().getName());
-
-            UserVo user = this.getUser(request, response);// 获取用户对象
-
-            UserContext.setUser(user); // 保存用户到ThreadLocal，这样，同一个线程访问的是同一个用户
+            // 获取用户对象
+            UserVo user = this.getUser(request, response);
+            // 保存用户到ThreadLocal，这样，同一个线程访问的是同一个用户
+            UserContext.setUser(user);
 
             // 获取标注了 @AccessLimit 的方法，没有注解，则直接返回
             HandlerMethod hm = (HandlerMethod) handler;
@@ -147,7 +145,7 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
             return null;
         }
 
-        UserVo userVo = redisService.get(SeckillUserKeyPrefix.token, token, UserVo.class);
+        UserVo userVo = redisService.get(SkUserKeyPrefix.TOKEN, token, UserVo.class);
 
         // 在有效期内从redis获取到key之后，需要将key重新设置一下，从而达到延长有效期的效果
         if (userVo != null) {
@@ -185,11 +183,11 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      */
     private void addCookie(HttpServletResponse response, String token, UserVo user) {
 
-        redisService.set(SeckillUserKeyPrefix.token, token, user);
+        redisService.set(SkUserKeyPrefix.TOKEN, token, user);
 
         Cookie cookie = new Cookie(UserServiceApi.COOKIE_NAME_TOKEN, token);
         // 客户端cookie的有限期和缓存中的cookie有效期一致
-        cookie.setMaxAge(SeckillUserKeyPrefix.token.expireSeconds());
+        cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());
         cookie.setPath("/");
         response.addCookie(cookie);
     }
