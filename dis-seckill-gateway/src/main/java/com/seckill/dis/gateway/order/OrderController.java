@@ -57,6 +57,7 @@ public class OrderController {
         long goodsId = order.getGoodsId();
         GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
         OrderDetailVo vo = new OrderDetailVo();
+        vo.setUser(user);// 设置用户信息
         vo.setOrder(order); // 设置订单信息
         vo.setGoods(goods); // 设置商品信息
         return Result.success(vo);

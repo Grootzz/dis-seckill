@@ -25,7 +25,7 @@
 
 
 <div class="panel panel-default">
-    <div class="panel-heading">秒杀订单详情</div>
+    <div class="panel-heading"><h1>秒杀订单详情</h1></div>
     <table class="table" id="goodslist">
         <tr>
             <td>商品名称</td>
@@ -107,6 +107,7 @@
                 orderId: orderId
             },
             success: function (data) {
+                console.log(data);
                 if (data.code == 0) {
                     render(data.data);
                 } else {

@@ -25,7 +25,7 @@
 <body>
 
 <div class="panel panel-default" style="height:100%;background-color:rgba(222,222,222,0.8)">
-    <div class="panel-heading">秒杀商品详情</div>
+    <div class="panel-heading"><h1>秒杀商品详情</h1></div>
     <div class="panel-body">
         <!--如果user为空，则表明没有登录-->
         <span id="userTip" style="color: black;font-size: large">您还没有登录，请登陆后再操作<br/></span>
@@ -117,7 +117,7 @@
             success: function (data) {
                 if (data.code == 0) {
                     //window.location.href="/order_detail.htm?orderId="+data.data.id;
-                    getSeckillResult($("#goodsId").val());
+                    getSkResult($("#goodsId").val());
                 } else {
                     layer.msg(data.msg);
                 }
@@ -129,13 +129,13 @@
     }
 
     /*获取秒杀的结果*/
-    function getSeckillResult(goodsId) {
+    function getSkResult(goodsId) {
         g_showLoading();// 加载中
         $.ajax({
             url: "/seckill/result",
             type: "GET",
             data: {
-                goodsId: $("#goodsId").val(),
+                goodsId: $("#goodsId").val()
             },
             success: function (data) {
                 if (data.code == 0) {
@@ -144,7 +144,7 @@
                         layer.msg("对不起，秒杀失败");
                     } else if (result == 0) {// 继续轮询发送秒杀请求
                         setTimeout(function () {
-                            getSeckillResult(goodsId);
+                            getSkResult(goodsId);
                         }, 200);// 轮询间隔200ms
                     } else {
                         layer.confirm("恭喜你，秒杀成功！查看订单？", {btn: ["确定", "取消"]},
@@ -170,9 +170,10 @@
     // 使用ajax从服务端请求页面数据, 跳转到这个页面时就会执行(function有$)
     $(function () {
         // countDown();
-        getDetail();// 获取商品详情
+        getDetail();
     });
 
+    /*获取商品详情*/
     function getDetail() {
         var goodsId = g_getQueryString("goodsId");// goodsId为goods_list.html中详情url中的参数
         $.ajax({
@@ -223,6 +224,7 @@
         if (remainSeconds > 0) {// 秒杀还没开始，倒计时
             $("#buyButton").attr("disabled", true);
             $("#skTip").html("秒杀倒计时：" + remainSeconds + "秒");
+            // $("#skTip").html("秒杀倒计时：" + new Date(remainSeconds).format("dd 天 hh 时 mm 分 ss") + "秒");
             timeout = setTimeout(function () {
                 $("#countDown").text(remainSeconds - 1);
                 $("#remainSeconds").val(remainSeconds - 1);

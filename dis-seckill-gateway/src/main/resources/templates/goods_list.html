@@ -24,15 +24,15 @@
 
 
 <div class="panel panel-default">
-    <div class="panel-heading">秒杀商品列表</div>
+    <div class="panel-heading"><h1>秒杀商品列表</h1></div>
     <table class="table" id="goodslist">
         <tr>
-            <td>商品名称</td>
-            <td>商品图片</td>
-            <td>商品原价</td>
-            <td style="color: crimson">秒杀价</td>
-            <td>库存数量</td>
-            <td>详情</td>
+            <td><b style="font-size: medium">商品名称</b></td>
+            <td><b style="font-size: medium">商品图片</b></td>
+            <td><b style="font-size: medium">商品原价</b></td>
+            <td style="color: crimson"><b style="font-size: medium">秒杀价</b></td>
+            <td><b style="font-size: medium">库存数量</b></td>
+            <td><b style="font-size: medium">详情</b></td>
         </tr>
 
         <tr th:each="goods,goodsStat : ${goodsList}">
@@ -54,6 +54,5 @@
 </div>
 
 </body>
-
 
 </html>

@@ -1,6 +1,7 @@
 package com.seckill.dis.common.api.order.vo;
 
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
+import com.seckill.dis.common.api.user.vo.UserVo;
 import com.seckill.dis.common.domain.OrderInfo;
 
 /**
@@ -13,6 +14,11 @@ import com.seckill.dis.common.domain.OrderInfo;
 public class OrderDetailVo {
 
     /**
+     * 用户信息
+     */
+    private UserVo user;
+
+    /**
      * 商品信息
      */
     private GoodsVo goods;
@@ -20,6 +26,14 @@ public class OrderDetailVo {
      * 订单信息
      */
     private OrderInfo order;
+
+    public UserVo getUser() {
+        return user;
+    }
+
+    public void setUser(UserVo user) {
+        this.user = user;
+    }
 
     public GoodsVo getGoods() {
         return goods;
