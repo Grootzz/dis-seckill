@@ -35,9 +35,9 @@ public interface GoodsMapper {
     GoodsVo getGoodsVoByGoodsId(@Param("goodsId") Long goodsId);
 
     /**
-     * 减少seckill_order中的库存
+     * 减少 seckill_order 中的库存
      * <p>
-     * c5: 增加库存判断 stock_count>0, 一次使得数据库不存在卖超问题
+     * 增加库存判断 stock_count>0, 一次使得数据库不存在卖超问题
      *
      * @param seckillGoods
      */

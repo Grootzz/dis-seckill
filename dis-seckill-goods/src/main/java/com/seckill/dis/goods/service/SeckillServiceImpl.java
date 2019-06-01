@@ -2,6 +2,8 @@ package com.seckill.dis.goods.service;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.SkKeyPrefix;
 import com.seckill.dis.common.api.goods.GoodsServiceApi;
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
 import com.seckill.dis.common.api.order.OrderServiceApi;
@@ -10,8 +12,6 @@ import com.seckill.dis.common.api.seckill.vo.VerifyCodeVo;
 import com.seckill.dis.common.api.user.vo.UserVo;
 import com.seckill.dis.common.domain.OrderInfo;
 import com.seckill.dis.common.domain.SeckillOrder;
-import com.seckill.dis.goods.redis.RedisService;
-import com.seckill.dis.goods.redis.SeckillKeyPrefix;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +38,8 @@ public class SeckillServiceImpl implements SeckillServiceApi {
     @Reference(interfaceClass = OrderServiceApi.class)
     OrderServiceApi orderService;
 
-    @Autowired
-    RedisService redisService;
+    @Reference(interfaceClass = RedisServiceApi.class)
+    RedisServiceApi redisService;
 
     /**
      * 用于生成验证码中的运算符
@@ -57,6 +57,7 @@ public class SeckillServiceImpl implements SeckillServiceApi {
     @Transactional
     @Override
     public OrderInfo seckill(UserVo user, GoodsVo goods) {
+
         // 1. 减库存
         boolean success = goodsService.reduceStock(goods);
         if (!success) {
@@ -67,12 +68,17 @@ public class SeckillServiceImpl implements SeckillServiceApi {
         return orderService.createOrder(user, goods);
     }
 
+    /**
+     * 设置秒杀商品数量为0
+     *
+     * @param goodsId
+     */
     private void setGoodsOver(long goodsId) {
-        redisService.set(SeckillKeyPrefix.isGoodsOver, "" + goodsId, true);
+        redisService.set(SkKeyPrefix.GOODS_SK_OVER, "" + goodsId, true);
     }
 
     private boolean getGoodsOver(long goodsId) {
-        return redisService.exists(SeckillKeyPrefix.isGoodsOver, "" + goodsId);
+        return redisService.exists(SkKeyPrefix.GOODS_SK_OVER, "" + goodsId);
     }
 
     /**

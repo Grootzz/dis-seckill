@@ -1,4 +1,4 @@
-package com.seckill.dis.cache.redis;
+package com.seckill.dis.common.api.cache.vo;
 
 
 /**

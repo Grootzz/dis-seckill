@@ -1,4 +1,4 @@
-package com.seckill.dis.order.redis;
+package com.seckill.dis.common.api.cache.vo;
 
 /**
  * 访问次数的key前缀
