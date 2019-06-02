@@ -6,6 +6,8 @@ import com.seckill.dis.common.api.cache.vo.OrderKeyPrefix;
 import com.seckill.dis.common.api.cache.vo.SkKeyPrefix;
 import com.seckill.dis.common.api.goods.GoodsServiceApi;
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
+import com.seckill.dis.common.api.mq.MqProviderApi;
+import com.seckill.dis.common.api.mq.vo.SkMessage;
 import com.seckill.dis.common.api.order.OrderServiceApi;
 import com.seckill.dis.common.api.seckill.SeckillServiceApi;
 import com.seckill.dis.common.api.seckill.vo.VerifyCodeVo;
@@ -59,8 +61,8 @@ public class SeckillController implements InitializingBean {
     @Reference(interfaceClass = OrderServiceApi.class)
     OrderServiceApi orderService;
 
-    @Autowired
-    MQSender sender;
+    @Reference(interfaceClass = MqProviderApi.class)
+    MqProviderApi sender;
 
     /**
      * 用于内存标记，标记库存是否为空，从而减少对redis的访问
@@ -163,12 +165,13 @@ public class SeckillController implements InitializingBean {
         }
 
         // 商品有库存且用户为秒杀商品，则将秒杀请求放入MQ
-        SeckillMessage message = new SeckillMessage();
+        SkMessage message = new SkMessage();
         message.setUser(user);
         message.setGoodsId(goodsId);
 
         // 放入MQ
         sender.sendSkMessage(message);
+
         // 排队中
         return Result.success(0);
     }
