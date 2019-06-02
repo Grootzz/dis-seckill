@@ -1,4 +1,4 @@
-package com.seckill.dis.user.domain;
+package com.seckill.dis.common.domain;
 
 import java.io.Serializable;
 import java.util.Date;

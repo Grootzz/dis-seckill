@@ -64,6 +64,14 @@ public interface UserServiceApi {
     /**
      * 登录
      *
+     * @param loginVo
+     * @return
+     */
+    String login(@Valid LoginVo loginVo);
+
+    /**
+     * 登录
+     *
      * @param response
      * @param loginVo
      * @return
@@ -72,6 +80,7 @@ public interface UserServiceApi {
 
     /**
      * 根据phone获取用户
+     *
      * @param phone
      * @return
      */

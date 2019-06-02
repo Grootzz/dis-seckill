@@ -61,23 +61,12 @@ public class UserServiceImpl implements UserServiceApi {
         return null;
     }
 
-
-    /**
-     * 用户登录, 要么处理成功返回true，否则会抛出全局异常
-     * 抛出的异常信息会被全局异常接收，全局异常会将异常信息传递到全局异常处理器
-     *
-     * @param response
-     * @param loginVo  封装了客户端请求传递过来的数据（即账号密码）
-     *                 （使用post方式，请求参数放在了请求体中，这个参数就是获取请求体中的数据）
-     * @return
-     */
     @Override
-    public String login(HttpServletResponse response, LoginVo loginVo) {
-
+    public String login(@Valid LoginVo loginVo) {
         logger.info(loginVo.toString());
 
+        // 抛出的异常信息会被全局异常接收，全局异常会将异常信息传递到全局异常处理器
         if (loginVo == null) {
-            // 抛出的异常信息会被全局异常接收，全局异常会将异常信息传递到全局异常处理器
             throw new GlobalException(CodeMsg.SERVER_ERROR);
         }
 
@@ -104,13 +93,60 @@ public class UserServiceImpl implements UserServiceApi {
         String token = UUIDUtil.uuid();
         // 每次访问都会生成一个新的session存储于redis和反馈给客户端，一个session对应存储一个user对象
         redisService.set(SkUserKeyPrefix.TOKEN, token, user);
-        // 将token写入cookie中, 然后传给客户端（一个cookie对应一个用户，这里将这个cookie的用户信息写入redis中）
-        Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
-        cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());// 保持与redis中的session一致
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
         return token;
+    }
+
+    /**
+     * 用户登录, 要么处理成功返回true，否则会抛出全局异常
+     * 抛出的异常信息会被全局异常接收，全局异常会将异常信息传递到全局异常处理器
+     *
+     * @param response
+     * @param loginVo  封装了客户端请求传递过来的数据（即账号密码）
+     *                 （使用post方式，请求参数放在了请求体中，这个参数就是获取请求体中的数据）
+     * @return
+     */
+    @Override
+    public String login(HttpServletResponse response, LoginVo loginVo) {
+
+//        logger.info(loginVo.toString());
+//
+//        // 抛出的异常信息会被全局异常接收，全局异常会将异常信息传递到全局异常处理器
+//        if (loginVo == null) {
+//            throw new GlobalException(CodeMsg.SERVER_ERROR);
+//        }
+//
+//        // 获取用户提交的手机号码和密码
+//        String mobile = loginVo.getMobile();
+//        String password = loginVo.getPassword();
+//
+//        // 判断手机号是否存在(首先从缓存中取，再从数据库取)
+//        SeckillUser user = this.getSeckillUserById(Long.parseLong(mobile));
+//        // 缓存中、数据库中都不存在该用户信息，直接返回
+//        if (user == null)
+//            throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
+//        logger.info("用户：" + user.toString());
+//
+//        // 判断手机号对应的密码是否一致
+//        String dbPassword = user.getPassword();
+//        String dbSalt = user.getSalt();
+//        String calcPass = MD5Util.formPassToDbPass(password, dbSalt);
+//        if (!calcPass.equals(dbPassword))
+//            throw new GlobalException(CodeMsg.PASSWORD_ERROR);
+//
+//        // 执行到这里表明登录成功，更新用户cookie
+//        // 生成cookie
+//        String token = UUIDUtil.uuid();
+//        // 每次访问都会生成一个新的session存储于redis和反馈给客户端，一个session对应存储一个user对象
+//        redisService.set(SkUserKeyPrefix.TOKEN, token, user);
+//        // 将token写入cookie中, 然后传给客户端（一个cookie对应一个用户，这里将这个cookie的用户信息写入redis中）
+//        Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
+//        cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());// 保持与redis中的session一致
+//        cookie.setPath("/");
+//        response.addCookie(cookie);
+//
+//        return token;
+
+        return null;
     }
 
 

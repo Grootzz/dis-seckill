@@ -1,6 +1,7 @@
 package com.seckill.dis.gateway.user;
 
 import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.SkUserKeyPrefix;
 import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.LoginVo;
 import com.seckill.dis.common.result.Result;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -98,8 +100,15 @@ public class UserController {
 //
 //        logger.info(cookie.getName() + ": " + cookie.getValue());
 
-        String cookie = userService.login(response, loginVo);
-        logger.info("cookie: " + cookie);
+//        String token = userService.login(response, loginVo);
+        String token = userService.login(loginVo);
+        logger.info("token: " + token);
+
+        // 将token写入cookie中, 然后传给客户端（一个cookie对应一个用户，这里将这个cookie的用户信息写入redis中）
+        Cookie cookie = new Cookie(UserServiceApi.COOKIE_NAME_TOKEN, token);
+        cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());// 保持与redis中的session一致
+        cookie.setPath("/");
+        response.addCookie(cookie);
         // 返回登陆成功
         return Result.success(true);
     }
