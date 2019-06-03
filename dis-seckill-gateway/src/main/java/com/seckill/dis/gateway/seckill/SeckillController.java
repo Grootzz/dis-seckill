@@ -19,13 +19,10 @@ import com.seckill.dis.common.util.MD5Util;
 import com.seckill.dis.common.util.UUIDUtil;
 import com.seckill.dis.common.util.VerifyCodeUtil;
 import com.seckill.dis.gateway.config.access.AccessLimit;
-import com.seckill.dis.gateway.rabbitmq.MQSender;
-import com.seckill.dis.gateway.rabbitmq.SeckillMessage;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -102,19 +99,20 @@ public class SeckillController implements InitializingBean {
 
         // 检验通过，获取秒杀路径
         String path = this.createSkPath(user, goodsId);
+
         // 向客户端回传随机生成的秒杀地址
         return Result.success(path);
     }
 
     /**
-     * c5: 秒杀逻辑（页面静态化分离，不需要直接将页面返回给客户端，而是返回客户端需要的页面动态数据，返回数据时json格式）
+     * 秒杀逻辑（页面静态化分离，不需要直接将页面返回给客户端，而是返回客户端需要的页面动态数据，返回数据时json格式）
      * <p>
      * QPS:1306
      * 5000 * 10
      * <p>
      * GET/POST的@RequestMapping是有区别的
      * <p>
-     * c6： 通过随机的path，客户端隐藏秒杀接口
+     * 通过随机的path，客户端隐藏秒杀接口
      * <p>
      * 优化: 不同于每次都去数据库中读取秒杀订单信息，而是在第一次生成秒杀订单成功后，
      * 将订单存储在redis中，再次读取订单信息的时候就直接从redis中读取
@@ -145,7 +143,7 @@ public class SeckillController implements InitializingBean {
         if (over)
             return Result.error(CodeMsg.SECKILL_OVER);
 
-        // 预减库存
+        // 预减库存，同时在库存为0时标记该商品已经结束秒杀
         Long stock = redisService.decr(GoodsKeyPrefix.GOODS_STOCK, "" + goodsId);
         if (stock < 0) {
             localOverMap.put(goodsId, true);// 秒杀结束。标记该商品已经秒杀结束
@@ -274,7 +272,6 @@ public class SeckillController implements InitializingBean {
 
         // 随机生成秒杀地址
         String path = MD5Util.md5(UUIDUtil.uuid() + "123456");
-//        String path = "a";
         // 将随机生成的秒杀地址存储在redis中（保证不同的用户和不同商品的秒杀地址是不一样的）
         redisService.set(SkKeyPrefix.SK_PATH, "" + user.getUuid() + "_" + goodsId, path);
         return path;
@@ -309,7 +306,7 @@ public class SeckillController implements InitializingBean {
 
         // 将商品的库存信息存储在redis中
         for (GoodsVo good : goods) {
-            redisService.set(com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix.GOODS_STOCK, "" + good.getId(), good.getStockCount());
+            redisService.set(GoodsKeyPrefix.GOODS_STOCK, "" + good.getId(), good.getStockCount());
             // 在系统启动时，标记库存不为空
             localOverMap.put(good.getId(), false);
         }

@@ -48,7 +48,9 @@ public class MqConsumer {
     @RabbitListener(queues = MQConfig.SECKILL_QUEUE)
     public void receiveSkInfo(String message) {
         logger.info("MQ receive a message: " + message);
+
         SkMessage skMessage = JsonUtil.stringToBean(message, SkMessage.class);
+
         // 获取秒杀用户信息与商品id
         UserVo user = skMessage.getUser();
         long goodsId = skMessage.getGoodsId();

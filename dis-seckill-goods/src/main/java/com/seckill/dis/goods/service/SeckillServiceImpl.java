@@ -31,8 +31,7 @@ import java.util.Random;
 @Service(interfaceClass = SeckillServiceApi.class)
 public class SeckillServiceImpl implements SeckillServiceApi {
 
-    //    @Reference(interfaceClass = GoodsServiceApi.class)
-    @Autowired
+    @Reference(interfaceClass = GoodsServiceApi.class)
     GoodsServiceApi goodsService;
 
     @Reference(interfaceClass = OrderServiceApi.class)
@@ -102,7 +101,6 @@ public class SeckillServiceImpl implements SeckillServiceApi {
             }
         }
     }
-
 
     /**
      * 创建验证码

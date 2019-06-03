@@ -42,10 +42,17 @@ public class GoodsServiceImpl implements GoodsServiceApi {
     }
 
 
+    /**
+     * 减库存
+     *
+     * @param goods
+     * @return
+     */
     @Override
     public boolean reduceStock(GoodsVo goods) {
         SeckillGoods seckillGoods = new SeckillGoods();
-        seckillGoods.setGoodsId(goods.getId());// 秒杀商品的id和商品的id是一样的
+        // 秒杀商品的id和商品的id是一样的
+        seckillGoods.setGoodsId(goods.getId());
         int ret = goodsMapper.reduceStack(seckillGoods);
         return ret > 0;
     }
