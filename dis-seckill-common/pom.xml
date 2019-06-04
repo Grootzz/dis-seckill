@@ -11,7 +11,8 @@
 
     <artifactId>dis-seckill-common</artifactId>
     <version>1.0.0</version>
-    <packaging>pom</packaging>
+    <!--<packaging>pom</packaging>-->
+    <packaging>jar</packaging>
 
     <name>dis-seckill-common</name>
     <description>通用模块</description>
@@ -80,4 +81,5 @@
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
+
 </project>
