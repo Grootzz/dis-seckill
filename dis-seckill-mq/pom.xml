@@ -16,6 +16,7 @@
 
     <dependencyManagement>
         <dependencies>
+
             <!-- Spring Boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -62,7 +63,7 @@
         <dependency>
             <groupId>com.seckill.dis</groupId>
             <artifactId>dis-seckill-common</artifactId>
-            <version>1.0.0</version>
+            <!--<version>1.0.0</version>-->
         </dependency>
 
         <dependency>
