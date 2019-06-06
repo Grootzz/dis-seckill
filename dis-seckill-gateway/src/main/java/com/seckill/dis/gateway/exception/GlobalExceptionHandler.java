@@ -42,13 +42,17 @@ public class GlobalExceptionHandler {
         // 如果所拦截的异常是自定义的全局异常，这按自定义异常的处理方式处理，否则按默认方式处理
         if (e instanceof GlobalException) {
             GlobalException exception = (GlobalException) e;
-            return Result.error(exception.getCodeMsg());// 向客户端返回异常信息
+            // 向客户端返回异常信息
+            return Result.error(exception.getCodeMsg());
         } else if (e instanceof BindException) {
             BindException bindException = (BindException) e;
             List<ObjectError> errors = bindException.getAllErrors();
-            ObjectError error = errors.get(0);// 这里只获取了第一个错误对象
-            String message = error.getDefaultMessage();// 获取其中的信息
-            return Result.error(CodeMsg.BIND_ERROR.fillArgs(message));// 将错误信息动态地拼接到已定义的部分信息上
+            // 这里只获取了第一个错误对象
+            ObjectError error = errors.get(0);
+            // 获取其中的信息
+            String message = error.getDefaultMessage();
+            // 将错误信息动态地拼接到已定义的部分信息上
+            return Result.error(CodeMsg.BIND_ERROR.fillArgs(message));
         } else {
             return Result.error(CodeMsg.SERVER_ERROR);
         }

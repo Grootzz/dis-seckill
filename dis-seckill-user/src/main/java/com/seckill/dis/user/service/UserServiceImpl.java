@@ -180,7 +180,7 @@ public class UserServiceImpl implements UserServiceApi {
     private SeckillUser getSeckillUserById(long phone) {
 
         // 1. 从redis中获取用户数据缓存
-        SeckillUser user = redisService.get(SkUserKeyPrefix.SK_USER_PHONE, "" + phone, SeckillUser.class);
+        SeckillUser user = redisService.get(SkUserKeyPrefix.SK_USER_PHONE, "_" + phone, SeckillUser.class);
 
         if (user != null)
             return user;
@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserServiceApi {
         user = userMapper.getUserByPhone(phone);
         // 然后将数据返回并将数据缓存在redis中
         if (user != null)
-            redisService.set(SkUserKeyPrefix.SK_USER_PHONE, "" + phone, user);
+            redisService.set(SkUserKeyPrefix.SK_USER_PHONE, "_" + phone, user);
         return user;
     }
 }

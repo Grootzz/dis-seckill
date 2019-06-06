@@ -52,7 +52,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * 从分布式session中获取 UserVo 对象
+     * 从分布式 session 中获取 UserVo 对象
      *
      * @param methodParameter
      * @param modelAndViewContainer
@@ -66,7 +66,6 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
                                   ModelAndViewContainer modelAndViewContainer,
                                   NativeWebRequest nativeWebRequest,
                                   WebDataBinderFactory webDataBinderFactory) throws Exception {
-
         // 获取请求和响应对象
         HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
@@ -82,12 +81,14 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
         // 判断是哪种方式返回的token，并由该种方式获取token（cookie）
         String token = StringUtils.isEmpty(paramToken) ? cookieToken : paramToken;
-        if (StringUtils.isEmpty(token))
+        if (StringUtils.isEmpty(token)) {
             return null;
+        }
 
         // 通过token就可以在redis中查出该token对应的用户对象
         UserVo userVo = redisService.get(SkUserKeyPrefix.TOKEN, token, UserVo.class);
         logger.info("获取userVo：" + userVo.toString());
+
         // 在有效期内从redis获取到key之后，需要将key重新设置一下，从而达到延长有效期的效果
         if (userVo != null) {
             addCookie(response, token, userVo);

@@ -1,6 +1,5 @@
 package com.seckill.dis.gateway.user;
 
-import com.seckill.dis.common.api.cache.RedisServiceApi;
 import com.seckill.dis.common.api.cache.vo.SkUserKeyPrefix;
 import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.LoginVo;

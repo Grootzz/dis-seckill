@@ -37,7 +37,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         logger.info("添加自定义的参数解析器");
-        argumentResolvers.add(userArgumentResolver);// 添加自定义的参数解析器
+        // 添加自定义的参数解析器
+        argumentResolvers.add(userArgumentResolver);
     }
 
     /**

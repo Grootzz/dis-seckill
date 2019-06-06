@@ -45,12 +45,9 @@ public class IsMobileValidator implements ConstraintValidator<IsMobile, String> 
         logger.info("是否需要校验参数：" + required);
         // 如果所检验字段可以为空
         if (required) {
-            return ValidatorUtil.isMobile(value);// 检验结果
+            return ValidatorUtil.isMobile(value);
         } else {
-            if (StringUtils.isEmpty(value))
-                return true;
-            else
-                return ValidatorUtil.isMobile(value);// 校验结果
+            return StringUtils.isEmpty(value) || ValidatorUtil.isMobile(value);
         }
     }
 }

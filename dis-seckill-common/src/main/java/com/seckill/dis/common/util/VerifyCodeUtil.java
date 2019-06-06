@@ -56,7 +56,7 @@ public class VerifyCodeUtil {
     }
 
     /**
-     * 使用ScriptEngine计算验证码中的数学表达式的值
+     * 使用 ScriptEngine 计算验证码中的数学表达式的值
      *
      * @param exp
      * @return

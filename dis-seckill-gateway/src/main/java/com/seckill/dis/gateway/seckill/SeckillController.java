@@ -19,6 +19,7 @@ import com.seckill.dis.common.util.MD5Util;
 import com.seckill.dis.common.util.UUIDUtil;
 import com.seckill.dis.common.util.VerifyCodeUtil;
 import com.seckill.dis.gateway.config.access.AccessLimit;
+import com.seckill.dis.gateway.exception.GlobalException;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +96,7 @@ public class SeckillController implements InitializingBean {
         boolean check = this.checkVerifyCode(user, goodsId, verifyCode);
 
         if (!check)
-            return Result.error(CodeMsg.REQUEST_ILLEGAL);// 检验不通过，请求非法
+            return Result.error(CodeMsg.VERITF_FAIL);// 检验不通过，请求非法
 
         // 检验通过，获取秒杀路径
         String path = this.createSkPath(user, goodsId);
@@ -212,6 +213,11 @@ public class SeckillController implements InitializingBean {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
 
+        // 刷新验证码的时候置缓存中的随机地址无效
+        String path = redisService.get(SkKeyPrefix.SK_PATH, "" + user.getUuid() + "_" + goodsId, String.class);
+        if (path != null)
+            redisService.delete(SkKeyPrefix.SK_PATH, "" + user.getUuid() + "_" + goodsId);
+
         // 创建验证码
         try {
             // String verifyCodeJsonString = seckillService.createVerifyCode(user, goodsId);
@@ -290,6 +296,7 @@ public class SeckillController implements InitializingBean {
             return false;
         // 从redis中读取出秒杀的path变量是否为本次秒杀操作执行前写入redis中的path
         String oldPath = redisService.get(SkKeyPrefix.SK_PATH, "" + user.getUuid() + "_" + goodsId, String.class);
+
         return path.equals(oldPath);
     }
 
