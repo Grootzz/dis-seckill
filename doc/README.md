@@ -4,7 +4,7 @@
 - [快速启动](#快速启动)
 - [系统架构](#系统架构)
 - [模块介绍](#模块介绍)
-- [TODO LIST](#TODO LIST)
+- [TODO LIST](#TODO)
 
 ## 介绍
 
@@ -109,7 +109,7 @@ jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 - dis-seckill-cache：缓存模块
 - dis-seckill-mq：消息队列模块
 
-## TODO LIST
+## TODO
 
 - [ ] 引入JWT简化权限验证；
 - [ ] 完成用户注册功能；
