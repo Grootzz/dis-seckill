@@ -88,7 +88,7 @@ jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 <http://localhost:8082/user/index>
 
-初始用户手机号码：18342390420，密码,：00000
+初始用户手机号码：18342390420，密码：000000
 
 ## 系统架构
 
@@ -114,6 +114,7 @@ jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 - [ ] 引入JWT简化权限验证；
 - [ ] 完成用户注册功能；
+- [ ] 引入分布式锁保证更改密码接口的幂等性；
 - [ ] 服务模块横向扩展；
 - [ ] 服务调用的负载均衡与服务降级；
 - [ ] gateway模块横向扩展，降低单个应用的压力；
@@ -127,4 +128,3 @@ jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 - <http://coding.imooc.com/class/168.html>
 - <https://github.com/Grootzz/seckill>
-
