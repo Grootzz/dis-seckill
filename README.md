@@ -126,3 +126,5 @@ jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 - <https://blog.csdn.net/gxftry1st/article/details/78560816>
 
 - <http://coding.imooc.com/class/168.html>
+- <https://github.com/Grootzz/seckill>
+
