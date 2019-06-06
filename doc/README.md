@@ -116,7 +116,8 @@ jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 - [ ] 服务模块横向扩展；
 - [ ] 服务调用的负载均衡与服务降级；
 - [ ] gateway模块横向扩展，降低单个应用的压力；
-- [ ] Nginx水平扩展
+- [ ] Nginx水平扩展;
+- [ ] 接口压测；
 - [ ] ......
 
 
