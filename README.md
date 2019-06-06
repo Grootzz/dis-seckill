@@ -5,6 +5,7 @@
 - [系统架构](#系统架构)
 - [模块介绍](#模块介绍)
 - [TODO LIST](#TODO)
+- [参考](#参考)
 
 ## 介绍
 
@@ -120,5 +121,8 @@ jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 - [ ] 接口压测；
 - [ ] ......
 
+## 参考
 
+- <https://blog.csdn.net/gxftry1st/article/details/78560816>
 
+- <http://coding.imooc.com/class/168.html>
