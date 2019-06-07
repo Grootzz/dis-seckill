@@ -97,7 +97,7 @@ jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 - 注册中心使用zookeeper；
 - 缓存采用redis；
-- 详细队列采用RabbitMq；
+- 消息队列采用RabbitMQ；
 - 用户请求全部交由Gateway模块处理；
 - Gateway模块使用RPC的方式调用其他模块提供的服务完成业务处理。
 
