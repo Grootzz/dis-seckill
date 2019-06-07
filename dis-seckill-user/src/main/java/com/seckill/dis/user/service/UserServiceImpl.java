@@ -4,6 +4,7 @@ import com.seckill.dis.common.api.cache.RedisServiceApi;
 import com.seckill.dis.common.api.cache.vo.SkUserKeyPrefix;
 import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.LoginVo;
+import com.seckill.dis.common.api.user.vo.RegisterVo;
 import com.seckill.dis.common.api.user.vo.UserInfoVo;
 import com.seckill.dis.common.api.user.vo.UserVo;
 import com.seckill.dis.common.exception.GlobalException;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Date;
 
 @Service(interfaceClass = UserServiceApi.class)
 public class UserServiceImpl implements UserServiceApi {
@@ -41,8 +43,31 @@ public class UserServiceImpl implements UserServiceApi {
         return 45;
     }
 
+    /**
+     * 注册用户
+     *
+     * @param userModel
+     * @return
+     */
     @Override
-    public boolean register(UserVo userModel) {
+    public boolean register(RegisterVo userModel) {
+
+        SeckillUser newUser = new SeckillUser();
+
+        newUser.setPhone(userModel.getPhone());
+        newUser.setNickname(userModel.getNickname());
+        newUser.setHead(userModel.getHead());
+
+        newUser.setSalt(MD5Util.SALT);
+
+        String dbPass = MD5Util.formPassToDbPass(userModel.getPassword(), MD5Util.SALT);
+        newUser.setPassword(dbPass);
+
+        Date date = new Date(System.currentTimeMillis());
+        newUser.setRegisterDate(date);
+
+        long id = userMapper.insertUser(newUser);
+        logger.info("" + id);
         return false;
     }
 

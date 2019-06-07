@@ -21,7 +21,7 @@ public class MD5Util {
     }
 
     // MD5的第一次加盐的salt值，客户端和服务端一致
-    private static final String salt = "1a2b3c4d";
+    public static final String SALT = "1a2b3c4d";
 
     /**
      * 对客户端输入的密码加盐（第一次加盐），得到的MD5值为表单中传输的值
@@ -41,7 +41,7 @@ public class MD5Util {
      */
     public static String inputPassToFormPass(String inputPassword) {
         // 加盐规则（自定义）
-        String str = "" + salt.charAt(0) + salt.charAt(2) + inputPassword + salt.charAt(5) + salt.charAt(4);
+        String str = "" + SALT.charAt(0) + SALT.charAt(2) + inputPassword + SALT.charAt(5) + SALT.charAt(4);
         // Calculates the MD5 digest and returns the value as a 32 character hex string.
         return md5(str);
     }
@@ -59,7 +59,7 @@ public class MD5Util {
     }
 
     /**
-     * 两次MD5：储存在数据库中的密码的md5 = MD5(MD5(input_password) + salt) + db_salt
+     * 两次MD5：储存在数据库中的密码的md5 = MD5(MD5(input_password) + SALT) + db_salt
      *
      * @param inputPassword 用户输入密码
      * @param saltDb        数据库中用户的salt
@@ -78,7 +78,7 @@ public class MD5Util {
     @Test
     public void TestMD5() {
         System.out.println(inputPassToFormPass("000000"));
-        System.out.println(inputPassToDbPass("000000", salt));
+        System.out.println(inputPassToDbPass("000000", SALT));
     }
 
 }

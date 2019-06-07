@@ -2,7 +2,7 @@
 <!--引入thymeleaf命名空间-->
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>登录</title>
+    <title>注册</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <!-- jquery：用户异步发出请求（注：@为thymeleaf的静态资源引入符） -->
@@ -24,15 +24,15 @@
 <body>
 
 <!--表单：表单没有指定请求的url，这部分工作交给给了下文的密码处理js脚本-->
-<form name="loginForm" id="loginForm" method="post" style="width:50%; margin:0 auto">
+<form name="registerForm" id="registerForm" method="post" style="width:50%; margin:0 auto">
 
-    <h2 style="text-align:center; margin-bottom: 20px">用户登录</h2>
+    <h2 style="text-align:center; margin-bottom: 20px">用户注册</h2>
 
     <div class="form-group">
         <div class="row">
-            <label class="form-label col-md-4">请输入手机号码</label>
+            <label class="form-label col-md-4">手机号码</label>
             <div class="col-md-5">
-                <input id="mobile" name="mobile" class="form-control" type="text" placeholder="手机号码" required="true"
+                <input id="phone" name="phone" class="form-control" type="text" placeholder="手机号码" required="true"
                        minlength="11" maxlength="11"/>
             </div>
             <div class="col-md-1">
@@ -42,9 +42,44 @@
 
     <div class="form-group">
         <div class="row">
+            <label class="form-label col-md-4">昵称</label>
+            <div class="col-md-5">
+                <input id="nickname" name="nickname" class="form-control" type="text" placeholder="昵称" required="true"/>
+            </div>
+            <div class="col-md-1">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="row">
+            <label class="form-label col-md-4">头像</label>
+            <div class="col-md-5">
+                <input id="head" name="head" class="form-control" type="text" placeholder="头像" required="false"/>
+            </div>
+            <div class="col-md-1">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="row">
             <label class="form-label col-md-4">请输入密码</label>
             <div class="col-md-5">
-                <input id="password" name="password" class="form-control" type="password" placeholder="密码"
+                <input id="password01" name="password01" class="form-control" type="password" placeholder="密码"
+                       required="true" minlength="6" maxlength="16"/>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="row">
+            <label class="form-label col-md-4">请再次输入密码</label>
+            <div class="col-md-5">
+                <input id="password02" name="password02" class="form-control" type="password" placeholder="密码"
                        required="true" minlength="6" maxlength="16"/>
             </div>
         </div>
@@ -53,11 +88,11 @@
     <div class="row">
         <div class="col-md-5">
             <!--login()是一个js脚本-->
-            <button class="btn btn-primary btn-block" type="submit" onclick="login()">登录</button>
+            <button class="btn btn-primary btn-block" type="submit" onclick="register()">注册</button>
         </div>
-        <div class="col-md-5">
-            <button class="btn btn-primary btn-block" type="reset" onclick="register()">注册</button>
-        </div>
+        <!--<div class="col-md-5">-->
+        <!--<button class="btn btn-primary btn-block" type="reset" onclick="reset()">重置</button>-->
+        <!--</div>-->
     </div>
 
 </form>
@@ -65,20 +100,35 @@
 
 <!--处理登录的js脚本，使用ajax异步发送请求完成登录-->
 <script>
-    function login() {
-        $("#loginForm").validate({
+    function register() {
+        $("#registerForm").validate({
             submitHandler: function (form) {
-                doLogin();
-                console.log("登录");
+
+                doRegister();
+                console.log("注册");
             }
         });
     }
 
-    function doLogin() {
+
+    function doRegister() {
         g_showLoading();
 
+        var phone = $("#phone").val();
+        var nickname = $("#nickname").val();
+        var head = $("#head").val();
+
         // 获取用户输入密码
-        var inputPass = $("#password").val();
+        var password01 = $("#password01").val();
+        var password02 = $("#password02").val();
+
+        if (password01 != password02){
+            console.log("密码不相同");
+            return;
+        }
+
+        var inputPass = password01;
+
         // 获取salt
         var salt = g_passsword_salt;
         // md5+salt，与服务器端的第一次MD5规则一致
@@ -87,11 +137,14 @@
 
         // 异步发出登录请求
         $.ajax({
-            url: "/user/login",// 请求的资源
+            // url: "/user/register",// 请求的资源
+            url: "/user/register",// 请求的资源
             type: "POST",
             /*post请求体中的数据*/
             data: {
-                mobile: $("#mobile").val(),
+                phone: phone,
+                nickname: nickname,
+                head: head,
                 password: password
             },
 
@@ -101,7 +154,7 @@
                 layer.closeAll();
                 if (data.code == 0) {
                     layer.msg("成功");
-                    window.location.href = "/goods/goodsList";
+                    window.location.href = "/user/index";
                 } else {
                     layer.msg(data.msg);
                 }
@@ -115,12 +168,6 @@
             }
         });
     }
-
-    /*登录*/
-    function register() {
-        window.location.href = "/user/doRegister";
-    }
-
 </script>
 
 </body>

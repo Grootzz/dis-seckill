@@ -1,6 +1,7 @@
 package com.seckill.dis.common.api.user;
 
 import com.seckill.dis.common.api.user.vo.LoginVo;
+import com.seckill.dis.common.api.user.vo.RegisterVo;
 import com.seckill.dis.common.api.user.vo.UserInfoVo;
 import com.seckill.dis.common.api.user.vo.UserVo;
 
@@ -34,7 +35,7 @@ public interface UserServiceApi {
      * @param userModel
      * @return
      */
-    boolean register(UserVo userModel);
+    boolean register(RegisterVo userModel);
 
 
     /**

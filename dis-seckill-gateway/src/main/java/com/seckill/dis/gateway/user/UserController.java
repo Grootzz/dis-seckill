@@ -3,7 +3,10 @@ package com.seckill.dis.gateway.user;
 import com.seckill.dis.common.api.cache.vo.SkUserKeyPrefix;
 import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.LoginVo;
+import com.seckill.dis.common.api.user.vo.RegisterVo;
+import com.seckill.dis.common.api.user.vo.UserVo;
 import com.seckill.dis.common.result.Result;
+import com.seckill.dis.common.util.MD5Util;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,33 +115,31 @@ public class UserController {
         return Result.success(true);
     }
 
-    public void register() {
-        return;
+
+    @RequestMapping(value = "doRegister", method = RequestMethod.GET)
+    public String doRegister() {
+        logger.info("doRegister()");
+        return "register";
     }
 
 
-//    /**
-//     * 根据 phone 查询秒杀用户信息
-//     * <p>
-//     * 对象级缓存
-//     * 从缓存中查询 UserVo 对象，如果 UserVo 在缓存中存在，则直接返回，否则从数据库返回
-//     *
-//     * @param phone
-//     * @return
-//     */
-//    private UserVo getUserVo(long phone) {
-//
-//        // 1. 从redis中获取用户数据缓存
-//        UserVo user = redisService.get(SeckillUserKeyPrefix.getSeckillUserById, "" + phone, UserVo.class);
-//        if (user != null)
-//            return user;
-//
-//        // 2. 如果缓存中没有用户数据，则将数据写入缓存
-//        // 先从数据库中取出数据
-//        user = userService.getUserByPhone(phone);
-//        // 然后将数据返回并将数据缓存在redis中
-//        if (user != null)
-//            redisService.set(SeckillUserKeyPrefix.getSeckillUserById, "" + phone, user);
-//        return user;
-//    }
+    /**
+     * 注册接口
+     *
+     * @param registerVo
+     * @return
+     */
+    @RequestMapping(value = "register", method = RequestMethod.POST)
+    @ResponseBody
+    public Result<Boolean> register(RegisterVo registerVo) {
+        String salt = "1a2b3c4d";
+        logger.info("RegisterVo = " + registerVo);
+
+        userService.register(registerVo);
+
+
+        return Result.success(true);
+    }
+
+
 }
