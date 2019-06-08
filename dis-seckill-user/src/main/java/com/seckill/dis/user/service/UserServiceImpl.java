@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Date;
@@ -50,7 +49,13 @@ public class UserServiceImpl implements UserServiceApi {
      * @return
      */
     @Override
-    public boolean register(RegisterVo userModel) {
+    public CodeMsg register(RegisterVo userModel) {
+
+        SeckillUser user = this.getSeckillUserByPhone(userModel.getPhone());
+        // 用户已经注册
+        if (user != null) {
+            return CodeMsg.USER_EXIST;
+        }
 
         SeckillUser newUser = new SeckillUser();
 
@@ -66,9 +71,15 @@ public class UserServiceImpl implements UserServiceApi {
         Date date = new Date(System.currentTimeMillis());
         newUser.setRegisterDate(date);
 
+        // 写入数据库
         long id = userMapper.insertUser(newUser);
-        logger.info("" + id);
-        return false;
+
+        // 用户注册成功
+        if (id > 0)
+            return CodeMsg.SUCCESS;
+
+        // 用户注册失败
+        return CodeMsg.REGISTER_FAIL;
     }
 
     @Override
@@ -100,7 +111,7 @@ public class UserServiceImpl implements UserServiceApi {
         String password = loginVo.getPassword();
 
         // 判断手机号是否存在(首先从缓存中取，再从数据库取)
-        SeckillUser user = this.getSeckillUserById(Long.parseLong(mobile));
+        SeckillUser user = this.getSeckillUserByPhone(Long.parseLong(mobile));
         // 缓存中、数据库中都不存在该用户信息，直接返回
         if (user == null)
             throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
@@ -145,7 +156,7 @@ public class UserServiceImpl implements UserServiceApi {
 //        String password = loginVo.getPassword();
 //
 //        // 判断手机号是否存在(首先从缓存中取，再从数据库取)
-//        SeckillUser user = this.getSeckillUserById(Long.parseLong(mobile));
+//        SeckillUser user = this.getSeckillUserByPhone(Long.parseLong(mobile));
 //        // 缓存中、数据库中都不存在该用户信息，直接返回
 //        if (user == null)
 //            throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
@@ -202,7 +213,7 @@ public class UserServiceImpl implements UserServiceApi {
      * @param phone
      * @return
      */
-    private SeckillUser getSeckillUserById(long phone) {
+    private SeckillUser getSeckillUserByPhone(long phone) {
 
         // 1. 从redis中获取用户数据缓存
         SeckillUser user = redisService.get(SkUserKeyPrefix.SK_USER_PHONE, "_" + phone, SeckillUser.class);
@@ -210,7 +221,7 @@ public class UserServiceImpl implements UserServiceApi {
         if (user != null)
             return user;
 
-        // 2. 如果缓存中没有用户数据，则将数据写入缓存
+        // 2. 如果缓存中没有用户数据，则从数据库中查询数据并将数据写入缓存
         // 先从数据库中取出数据
         user = userMapper.getUserByPhone(phone);
         // 然后将数据返回并将数据缓存在redis中

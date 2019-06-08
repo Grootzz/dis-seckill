@@ -5,8 +5,10 @@ import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.LoginVo;
 import com.seckill.dis.common.api.user.vo.RegisterVo;
 import com.seckill.dis.common.api.user.vo.UserVo;
+import com.seckill.dis.common.result.CodeMsg;
 import com.seckill.dis.common.result.Result;
 import com.seckill.dis.common.util.MD5Util;
+import com.seckill.dis.gateway.exception.GlobalException;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,13 +134,15 @@ public class UserController {
     @RequestMapping(value = "register", method = RequestMethod.POST)
     @ResponseBody
     public Result<Boolean> register(RegisterVo registerVo) {
-        String salt = "1a2b3c4d";
         logger.info("RegisterVo = " + registerVo);
 
-        userService.register(registerVo);
+        if (registerVo == null) {
+            throw new GlobalException(CodeMsg.FILL_REGISTER_INFO);
+        }
 
+        CodeMsg codeMsg = userService.register(registerVo);
 
-        return Result.success(true);
+        return Result.info(codeMsg);
     }
 
 

@@ -4,6 +4,7 @@ import com.seckill.dis.common.api.user.vo.LoginVo;
 import com.seckill.dis.common.api.user.vo.RegisterVo;
 import com.seckill.dis.common.api.user.vo.UserInfoVo;
 import com.seckill.dis.common.api.user.vo.UserVo;
+import com.seckill.dis.common.result.CodeMsg;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -35,8 +36,7 @@ public interface UserServiceApi {
      * @param userModel
      * @return
      */
-    boolean register(RegisterVo userModel);
-
+    CodeMsg register(RegisterVo userModel);
 
     /**
      * 检查用户名是否存在

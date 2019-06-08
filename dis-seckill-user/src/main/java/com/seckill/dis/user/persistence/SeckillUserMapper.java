@@ -1,6 +1,5 @@
 package com.seckill.dis.user.persistence;
 
-import com.seckill.dis.common.domain.OrderInfo;
 import com.seckill.dis.user.domain.SeckillUser;
 import org.apache.ibatis.annotations.*;
 
@@ -11,7 +10,8 @@ import org.apache.ibatis.annotations.*;
  */
 @Mapper
 public interface SeckillUserMapper {
-     /**
+
+    /**
      * 通过 phone 查询用户信息
      *
      * @param phone
@@ -28,9 +28,19 @@ public interface SeckillUserMapper {
     void updatePassword(SeckillUser updatedUser);
 
 
-    @Insert("INSERT INTO seckill_user (phone, nickname, password, salt, head, register_date, last_login_date, login_count)"
-            + "VALUES (#{phone}, #{nickname}, #{password}, #{salt}, #{head}, #{registerDate}, #{lastLoginDate}, #{loginCount})")
-    // 查询出插入订单信息的表id，并返回
-    @SelectKey(keyColumn = "UUID", keyProperty = "uuid", resultType = long.class, before = false, statement = "SELECT last_insert_id()")
+    /**
+     * 插入一条用户信息到数据库中
+     *
+     * @param seckillUser
+     * @return
+     */
     long insertUser(SeckillUser seckillUser);
+
+    /**
+     * 查询电话号码
+     *
+     * @param phone
+     * @return
+     */
+    long findPhone(long phone);
 }

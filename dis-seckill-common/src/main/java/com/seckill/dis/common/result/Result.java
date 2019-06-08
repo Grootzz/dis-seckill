@@ -62,6 +62,35 @@ public class Result<T> implements Serializable {
         return new Result<T>(data);
     }
 
+    /**
+     * 业务处理信息
+     *
+     * @param serverError
+     * @param <T>
+     * @return
+     */
+    public static <T> Result<T> info(CodeMsg serverError) {
+        return new Result<T>(serverError);
+    }
+
+    /**
+     * 业务处理成功
+     *
+     * @param serverError
+     * @param <T>
+     * @return
+     */
+    public static <T> Result<T> success(CodeMsg serverError) {
+        return new Result<T>(serverError);
+    }
+
+    /**
+     * 业务处理失败
+     *
+     * @param serverError
+     * @param <T>
+     * @return
+     */
     public static <T> Result<T> error(CodeMsg serverError) {
         return new Result<T>(serverError);
     }

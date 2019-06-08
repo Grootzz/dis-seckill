@@ -1,11 +1,13 @@
 package com.seckill.dis.common.result;
 
+import java.io.Serializable;
+
 /**
  * 响应结果状态码
  *
  * @author noodle
  */
-public class CodeMsg {
+public class CodeMsg implements Serializable {
 
     private int code;
     private String msg;
@@ -21,7 +23,7 @@ public class CodeMsg {
     public static CodeMsg ACCESS_LIMIT_REACHED = new CodeMsg(500104, "访问太频繁！");
 
     /**
-     * 登录模块 5002XX
+     * 用户模块 5002XX
      */
     public static CodeMsg SESSION_ERROR = new CodeMsg(500210, "Session不存在或者已经失效，请返回登录！");
     public static CodeMsg PASSWORD_EMPTY = new CodeMsg(500211, "登录密码不能为空");
@@ -29,6 +31,10 @@ public class CodeMsg {
     public static CodeMsg MOBILE_ERROR = new CodeMsg(500213, "手机号格式错误");
     public static CodeMsg MOBILE_NOT_EXIST = new CodeMsg(500214, "手机号不存在");
     public static CodeMsg PASSWORD_ERROR = new CodeMsg(500215, "密码错误");
+    public static CodeMsg USER_EXIST = new CodeMsg(500216, "用户已经存在，无需重复注册");
+    public static CodeMsg REGISTER_SUCCESS = new CodeMsg(500217, "注册成功");
+    public static CodeMsg REGISTER_FAIL = new CodeMsg(500218, "注册异常");
+    public static CodeMsg FILL_REGISTER_INFO = new CodeMsg(500219, "请填写注册信息");
 
     //登录模块 5002XX
 
