@@ -71,15 +71,6 @@ public interface UserServiceApi {
     String login(@Valid LoginVo loginVo);
 
     /**
-     * 登录
-     *
-     * @param response
-     * @param loginVo
-     * @return
-     */
-    String login(HttpServletResponse response, @Valid LoginVo loginVo);
-
-    /**
      * 根据phone获取用户
      *
      * @param phone

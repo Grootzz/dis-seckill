@@ -118,6 +118,11 @@ public class UserController {
     }
 
 
+    /**
+     * 注册跳转
+     *
+     * @return
+     */
     @RequestMapping(value = "doRegister", method = RequestMethod.GET)
     public String doRegister() {
         logger.info("doRegister()");
