@@ -118,7 +118,7 @@ jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 ## TODO
 
 - [ ] 引入JWT简化权限验证；
-- [ ] 完成用户注册功能；
+- [x] 完成用户注册功能；
 - [ ] 引入分布式锁保证更改密码接口的幂等性；
 - [ ] 服务模块横向扩展；
 - [ ] 服务调用的负载均衡与服务降级；
