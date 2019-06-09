@@ -50,37 +50,37 @@ mvn clean package
 启动用户服务：
 
 ```properties
-jar dis-seckill-user/target/dis-seckill-user-0.0.1-SNAPSHOT.jar
+java -jar dis-seckill-user/target/dis-seckill-user-0.0.1-SNAPSHOT.jar
 ```
 
 启动商品服务：
 
 ```properties
-jar dis-seckill-goods/target/dis-seckill-goods-0.0.1-SNAPSHOT.jar
+java -jar dis-seckill-goods/target/dis-seckill-goods-0.0.1-SNAPSHOT.jar
 ```
 
 启动订单服务：
 
 ```properties
-jar dis-seckill-order/target/dis-seckill-order-0.0.1-SNAPSHOT.jar
+java -jar dis-seckill-order/target/dis-seckill-order-0.0.1-SNAPSHOT.jar
 ```
 
 启动缓存服务：
 
 ```properties
-jar dis-seckill-cache/target/dis-seckill-cache-0.0.1-SNAPSHOT.jar
+java -jar dis-seckill-cache/target/dis-seckill-cache-0.0.1-SNAPSHOT.jar
 ```
 
 启动消息队列服务：
 
 ```properties
-jar dis-seckill-mq/target/dis-seckill-mq-0.0.1-SNAPSHOT.jar
+java -jar dis-seckill-mq/target/dis-seckill-mq-0.0.1-SNAPSHOT.jar
 ```
 
 启动网关服务：
 
 ```properties
-jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
+java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 ```
 
 如果将项目导入IDE中进行构建，则分别按上面的顺序启动服务即可。
