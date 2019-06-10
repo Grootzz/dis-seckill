@@ -66,45 +66,7 @@ public class UserController {
     @RequestMapping(value = "login", method = RequestMethod.POST)
     @ResponseBody
     public Result<Boolean> login(HttpServletResponse response, @Valid LoginVo loginVo) {
-//        // 打印接收的表单数据
-//        logger.info(loginVo.toString());
-//
-//        // 抛出的异常信息会被全局异常接收，全局异常会将异常信息传递到全局异常处理器
-//        if (loginVo == null)
-//            throw new GlobalException(CodeMsg.SERVER_ERROR);
-//
-//        // 获取用户提交的手机号码和密码
-//        String phone = loginVo.getMobile();
-//        String password = loginVo.getPassword();
-//
-//        // 判断手机号是否存在(首先从缓存中取，再从数据库取)
-//        UserVo user = this.getUserVo(Long.parseLong(phone));
-//        if (user == null)
-//            throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
-//        logger.info("用户：" + user.toString());
-//
-//        // 执行到这里表明登录成功，更新用户cookie
-//        String dbPassword = user.getPassword();
-//        String dbSalt = user.getSalt();
-//        String calcPass = MD5Util.formPassToDbPass(password, dbSalt);
-//        if (!calcPass.equals(dbPassword))
-//            throw new GlobalException(CodeMsg.PASSWORD_ERROR);
-//
-//        // 执行到这里表明登录成功了
-//        // 生成cookie
-//        String token = UUIDUtil.uuid();
-//        // 每次访问都会生成一个新的session存储于redis和反馈给客户端，一个session对应存储一个user对象
-//        redisService.set(SeckillUserKeyPrefix.token, token, user);
-//        // 将token写入cookie中, 然后传给客户端（一个cookie对应一个用户，这里将这个cookie的用户信息写入redis中）
-//        Cookie cookie = new Cookie(UserServiceApi.COOKIE_NAME_TOKEN, token);
-//        // 保持与redis中的session一致
-//        cookie.setMaxAge(SeckillUserKeyPrefix.token.expireSeconds());
-//        cookie.setPath("/");
-//        response.addCookie(cookie);
-//
-//        logger.info(cookie.getName() + ": " + cookie.getValue());
 
-//        String token = userService.login(response, loginVo);
         String token = userService.login(loginVo);
         logger.info("token: " + token);
 

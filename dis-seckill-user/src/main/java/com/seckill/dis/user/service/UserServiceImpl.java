@@ -1,5 +1,6 @@
 package com.seckill.dis.user.service;
 
+import com.seckill.dis.common.api.cache.DLockApi;
 import com.seckill.dis.common.api.cache.RedisServiceApi;
 import com.seckill.dis.common.api.cache.vo.SkUserKeyPrefix;
 import com.seckill.dis.common.api.user.UserServiceApi;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.Valid;
 import java.util.Date;
+import java.util.UUID;
 
 @Service(interfaceClass = UserServiceApi.class)
 public class UserServiceImpl implements UserServiceApi {
@@ -36,6 +38,9 @@ public class UserServiceImpl implements UserServiceApi {
     @Reference(interfaceClass = RedisServiceApi.class)
     private RedisServiceApi redisService;
 
+    @Reference(interfaceClass = DLockApi.class)
+    private DLockApi dLock;
+
     @Override
     public int login(String username, String password) {
         return 45;
@@ -50,12 +55,22 @@ public class UserServiceImpl implements UserServiceApi {
     @Override
     public CodeMsg register(RegisterVo userModel) {
 
+        // 加锁
+        String uniqueValue = UUIDUtil.uuid() + "-" + Thread.currentThread().getId();
+        String lockKey = "redis-lock";
+        boolean lock = dLock.lock("redis-lock", uniqueValue, 60 * 1000);
+        if (!lock)
+            return CodeMsg.WAIT_REGISTER_DONE;
+
+        // 检查用户是否注册
         SeckillUser user = this.getSeckillUserByPhone(userModel.getPhone());
+
         // 用户已经注册
         if (user != null) {
             return CodeMsg.USER_EXIST;
         }
 
+        // 生成skuser对象
         SeckillUser newUser = new SeckillUser();
 
         newUser.setPhone(userModel.getPhone());
@@ -76,6 +91,11 @@ public class UserServiceImpl implements UserServiceApi {
         // 用户注册成功
         if (id > 0)
             return CodeMsg.SUCCESS;
+
+        boolean unlock = dLock.unlock(lockKey, uniqueValue);
+
+        if (!unlock)
+            return CodeMsg.REGISTER_FAIL;
 
         // 用户注册失败
         return CodeMsg.REGISTER_FAIL;

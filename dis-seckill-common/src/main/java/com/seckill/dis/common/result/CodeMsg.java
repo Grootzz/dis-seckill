@@ -35,6 +35,7 @@ public class CodeMsg implements Serializable {
     public static CodeMsg REGISTER_SUCCESS = new CodeMsg(500217, "注册成功");
     public static CodeMsg REGISTER_FAIL = new CodeMsg(500218, "注册异常");
     public static CodeMsg FILL_REGISTER_INFO = new CodeMsg(500219, "请填写注册信息");
+    public static CodeMsg WAIT_REGISTER_DONE = new CodeMsg(500220, "等待注册完成");
 
     //登录模块 5002XX
 

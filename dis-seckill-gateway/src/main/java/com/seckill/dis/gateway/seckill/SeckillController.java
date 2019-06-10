@@ -19,7 +19,6 @@ import com.seckill.dis.common.util.MD5Util;
 import com.seckill.dis.common.util.UUIDUtil;
 import com.seckill.dis.common.util.VerifyCodeUtil;
 import com.seckill.dis.gateway.config.access.AccessLimit;
-import com.seckill.dis.gateway.exception.GlobalException;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

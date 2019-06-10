@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dis-seckill-common</artifactId>
-    <version>1.0.0</version>
+    <version>${top-version}</version>
     <!--<packaging>pom</packaging>-->
     <packaging>jar</packaging>
 
