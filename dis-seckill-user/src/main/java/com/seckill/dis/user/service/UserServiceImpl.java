@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserServiceApi {
         boolean lock = dLock.lock("redis-lock", uniqueValue, 60 * 1000);
         if (!lock)
             return CodeMsg.WAIT_REGISTER_DONE;
+        logger.debug("注册接口加锁成功");
 
         // 检查用户是否注册
         SeckillUser user = this.getSeckillUserByPhone(userModel.getPhone());
@@ -88,14 +89,14 @@ public class UserServiceImpl implements UserServiceApi {
         // 写入数据库
         long id = userMapper.insertUser(newUser);
 
+        boolean unlock = dLock.unlock(lockKey, uniqueValue);
+        if (!unlock)
+            return CodeMsg.REGISTER_FAIL;
+        logger.debug("注册接口解锁成功");
+
         // 用户注册成功
         if (id > 0)
             return CodeMsg.SUCCESS;
-
-        boolean unlock = dLock.unlock(lockKey, uniqueValue);
-
-        if (!unlock)
-            return CodeMsg.REGISTER_FAIL;
 
         // 用户注册失败
         return CodeMsg.REGISTER_FAIL;
