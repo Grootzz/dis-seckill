@@ -20,13 +20,13 @@ public class RedisLockImpl implements DLockApi {
      * 通过连接池对象可以获得对redis的连接
      */
     @Autowired
-    private static JedisPool jedisPool;
+    private JedisPool jedisPool;
 
-    private static final String LOCK_SUCCESS = "OK";
-    private static final String SET_IF_NOT_EXIST = "NX";
-    private static final String SET_WITH_EXPIRE_TIME = "PX";
+    private final String LOCK_SUCCESS = "OK";
+    private final String SET_IF_NOT_EXIST = "NX";
+    private final String SET_WITH_EXPIRE_TIME = "PX";
 
-    private static final Long RELEASE_SUCCESS = 1L;
+    private final Long RELEASE_SUCCESS = 1L;
 
     /**
      * 获取锁
