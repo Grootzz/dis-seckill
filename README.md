@@ -46,17 +46,16 @@
 git clone git@github.com:Grootzz/dis-seckill.git
 mvn clean package
 ```
+启动缓存服务：
+
+```properties
+java -jar dis-seckill-cache/target/dis-seckill-cache-0.0.1-SNAPSHOT.jar
+```
 
 启动用户服务：
 
 ```properties
 java -jar dis-seckill-user/target/dis-seckill-user-0.0.1-SNAPSHOT.jar
-```
-
-启动商品服务：
-
-```properties
-java -jar dis-seckill-goods/target/dis-seckill-goods-0.0.1-SNAPSHOT.jar
 ```
 
 启动订单服务：
@@ -65,10 +64,10 @@ java -jar dis-seckill-goods/target/dis-seckill-goods-0.0.1-SNAPSHOT.jar
 java -jar dis-seckill-order/target/dis-seckill-order-0.0.1-SNAPSHOT.jar
 ```
 
-启动缓存服务：
+启动商品服务：
 
 ```properties
-java -jar dis-seckill-cache/target/dis-seckill-cache-0.0.1-SNAPSHOT.jar
+java -jar dis-seckill-goods/target/dis-seckill-goods-0.0.1-SNAPSHOT.jar
 ```
 
 启动消息队列服务：
@@ -82,6 +81,8 @@ java -jar dis-seckill-mq/target/dis-seckill-mq-0.0.1-SNAPSHOT.jar
 ```properties
 java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 ```
+
+> 注：启动服务时最好按上面的顺序启动。
 
 如果将项目导入IDE中进行构建，则分别按上面的顺序启动服务即可。
 
