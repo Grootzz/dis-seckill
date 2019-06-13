@@ -57,8 +57,8 @@ public class UserServiceImpl implements UserServiceApi {
 
         // 加锁
         String uniqueValue = UUIDUtil.uuid() + "-" + Thread.currentThread().getId();
-        String lockKey = "redis-lock";
-        boolean lock = dLock.lock("redis-lock", uniqueValue, 60 * 1000);
+        String lockKey = "redis-lock" + userModel.getPhone();
+        boolean lock = dLock.lock(lockKey, uniqueValue, 60 * 1000);
         if (!lock)
             return CodeMsg.WAIT_REGISTER_DONE;
         logger.debug("注册接口加锁成功");
