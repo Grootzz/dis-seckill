@@ -68,6 +68,7 @@ public class UserServiceImpl implements UserServiceApi {
 
         // 用户已经注册
         if (user != null) {
+            dLock.unlock(lockKey, uniqueValue);
             return CodeMsg.USER_EXIST;
         }
 

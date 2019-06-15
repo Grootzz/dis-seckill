@@ -61,4 +61,4 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
 }
 ```
 
-本项目使用拦截器作为权限验证和限流组件。
+本项目使用拦截器作为权限验证和限流组件。具体实现见源码。
