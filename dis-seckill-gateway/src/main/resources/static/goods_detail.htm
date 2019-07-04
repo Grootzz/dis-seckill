@@ -93,7 +93,7 @@
                 verifyCode: $("#verifyCode").val() // 获取验证码的值
             },
             success: function (data) {
-                if (data.code == 0) {
+                if (data.code === 0) {
                     var path = data.data;// 获取服务端返回的秒杀地址
                     doSeckill(path);// 真正做秒杀的接口
                 } else {
