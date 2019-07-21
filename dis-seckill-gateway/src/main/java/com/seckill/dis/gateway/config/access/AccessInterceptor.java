@@ -94,8 +94,8 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
                 // 点击次数未达最大值
             } else if (count < maxCount) {
                 redisService.incr(accessKeyPrefix, key);
-            } else {
                 // 点击次数已满
+            } else {
                 this.render(response, CodeMsg.ACCESS_LIMIT_REACHED);
                 return false;
             }

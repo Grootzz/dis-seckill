@@ -84,7 +84,8 @@ public class SeckillController implements InitializingBean {
                                          @RequestParam("goodsId") long goodsId,
                                          @RequestParam(value = "verifyCode", defaultValue = "0") int verifyCode) {
 
-        // 在执行下面的逻辑之前，会相对path请求进行拦截处理（@AccessLimit， AccessInterceptor），防止访问次数过于频繁，对服务器造成过大的压力
+        /** 在执行下面的逻辑之前，会先对path请求进行拦截处理（@AccessLimit， AccessInterceptor），防止访问次数过于频繁，对服务器造成过大的压力 */
+
         model.addAttribute("user", user);
 
         if (goodsId <= 0) {
