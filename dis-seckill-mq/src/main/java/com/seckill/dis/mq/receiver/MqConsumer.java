@@ -63,7 +63,7 @@ public class MqConsumer {
         }
 
         // 判断是否已经秒杀到了
-        SeckillOrder order = this.getSeckillOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
+        SeckillOrder order = this.getSkOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
         if (order != null) {
             return;
         }
@@ -82,7 +82,7 @@ public class MqConsumer {
      * @param goodsId
      * @return 秒杀订单信息
      */
-    private SeckillOrder getSeckillOrderByUserIdAndGoodsId(Long userId, long goodsId) {
+    private SeckillOrder getSkOrderByUserIdAndGoodsId(Long userId, long goodsId) {
 
         // 从redis中取缓存，减少数据库的访问
         SeckillOrder seckillOrder = redisService.get(OrderKeyPrefix.SK_ORDER, ":" + userId + "_" + goodsId, SeckillOrder.class);

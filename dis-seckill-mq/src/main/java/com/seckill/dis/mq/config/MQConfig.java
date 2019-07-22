@@ -1,11 +1,8 @@
 package com.seckill.dis.mq.config;
 
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 通过配置文件获取消息队列
