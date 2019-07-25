@@ -10,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  *
  * @author noodle
  */
-//@EnableWebMvc
 @SpringBootApplication
 public class GatewayApplication {
 
