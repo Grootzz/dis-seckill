@@ -9,7 +9,6 @@ import com.seckill.dis.common.api.order.OrderServiceApi;
 import com.seckill.dis.common.api.seckill.SeckillServiceApi;
 import com.seckill.dis.common.api.user.vo.UserVo;
 import com.seckill.dis.common.domain.SeckillOrder;
-import com.seckill.dis.common.util.JsonUtil;
 import com.seckill.dis.mq.config.MQConfig;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
@@ -46,14 +45,12 @@ public class MqConsumer {
      * @param message
      */
     @RabbitListener(queues = MQConfig.SECKILL_QUEUE)
-    public void receiveSkInfo(String message) {
+    public void receiveSkInfo(SkMessage message) {
         logger.info("MQ receive a message: " + message);
 
-        SkMessage skMessage = JsonUtil.stringToBean(message, SkMessage.class);
-
         // 获取秒杀用户信息与商品id
-        UserVo user = skMessage.getUser();
-        long goodsId = skMessage.getGoodsId();
+        UserVo user = message.getUser();
+        long goodsId = message.getGoodsId();
 
         // 获取商品的库存
         GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);

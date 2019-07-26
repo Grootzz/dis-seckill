@@ -1,8 +1,11 @@
 package com.seckill.dis.mq.config;
 
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 /**
  * 通过配置文件获取消息队列
@@ -31,5 +34,19 @@ public class MQConfig {
     @Bean
     public Queue seckillQueue() {
         return new Queue(SECKILL_QUEUE, true);
+    }
+
+
+    /**
+     * 实例化 RabbitTemplate
+     *
+     * @param connectionFactory
+     * @return
+     */
+    @Bean
+    @Scope("prototype")
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate template = new RabbitTemplate(connectionFactory);
+        return template;
     }
 }
