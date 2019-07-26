@@ -2,7 +2,6 @@ package com.seckill.dis.mq.service;
 
 import com.seckill.dis.common.api.mq.MqProviderApi;
 import com.seckill.dis.common.api.mq.vo.SkMessage;
-import com.seckill.dis.common.util.JsonUtil;
 import com.seckill.dis.mq.config.MQConfig;
 import org.apache.dubbo.config.annotation.Service;
 import org.slf4j.Logger;
@@ -36,8 +35,7 @@ public class MqProviderImpl implements MqProviderApi, RabbitTemplate.ConfirmCall
 
     @Override
     public void sendSkMessage(SkMessage message) {
-        String msg = JsonUtil.beanToString(message);
-        logger.info("MQ send message: " + msg);
+        logger.info("MQ send message: " + message);
         // 秒杀消息关联的数据
         CorrelationData skCorrData = new CorrelationData(UUID.randomUUID().toString());
         // 第一个参数为消息队列名(此处也为routingKey)，第二个参数为发送的消息
@@ -50,11 +48,11 @@ public class MqProviderImpl implements MqProviderApi, RabbitTemplate.ConfirmCall
      */
     @Override
     public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-        logger.info("CallBackConfirm UUID: " + correlationData.getId());
+        logger.info("SkMessage UUID: " + correlationData.getId());
         if (ack) {
-            logger.info("CallBackConfirm 消息消费成功！");
+            logger.info("SkMessage 消息消费成功！");
         } else {
-            System.out.println("CallBackConfirm 消息消费失败！");
+            System.out.println("SkMessage 消息消费失败！");
         }
 
         if (cause != null) {
