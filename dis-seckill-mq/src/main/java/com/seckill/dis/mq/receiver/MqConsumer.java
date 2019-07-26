@@ -62,7 +62,7 @@ public class MqConsumer {
             return;
         }
 
-        // 判断是否已经秒杀到了
+        // 判断是否已经秒杀到了（保证秒杀接口幂等性）
         SeckillOrder order = this.getSkOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
         if (order != null) {
             return;

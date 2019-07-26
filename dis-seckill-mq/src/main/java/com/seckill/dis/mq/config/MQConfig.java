@@ -17,6 +17,10 @@ public class MQConfig {
      */
     public static final String SECKILL_QUEUE = "seckill.queue";
 
+    /**
+     * 秒杀 routing key, 生产者沿着 routingKey 将消息投递到 exchange 中
+     */
+    public static final String SK_ROUTING_KEY = "routing.sk";
 
     /**
      * Direct模式 交换机exchange
