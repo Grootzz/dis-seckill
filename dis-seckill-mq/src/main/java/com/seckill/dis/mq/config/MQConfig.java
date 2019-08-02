@@ -36,7 +36,6 @@ public class MQConfig {
         return new Queue(SECKILL_QUEUE, true);
     }
 
-
     /**
      * 实例化 RabbitTemplate
      *
