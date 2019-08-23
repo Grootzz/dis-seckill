@@ -37,5 +37,5 @@ public interface SeckillServiceApi {
      * @param goodsId
      * @return
      */
-    public long getSeckillResult(Long userId, long goodsId);
+    long getSeckillResult(Long userId, long goodsId);
 }
