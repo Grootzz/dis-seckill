@@ -93,8 +93,7 @@ java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 初始用户手机号码：18342390420，密码：000000
 
 ## 系统架构
-![系统架构](assets/SYSTEM_ARCHITECTURE.png)
-![系统架构](https://github.com/Grootzz/dis-seckill/blob/master/doc/assets/SYSTEM_ARCHITECTURE.png)
+![系统架构](doc/assets/SYSTEM_ARCHITECTURE.png)
 
 - 注册中心使用zookeeper；
 - 缓存采用redis；
