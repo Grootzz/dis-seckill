@@ -91,7 +91,7 @@ jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 ## 系统架构
 
-![系统架构](assets/系统架构.png)
+![系统架构](assets/SYSTEM_ARCHITECTURE.png)
 
 - 注册中心使用zookeeper；
 - 缓存采用redis；
