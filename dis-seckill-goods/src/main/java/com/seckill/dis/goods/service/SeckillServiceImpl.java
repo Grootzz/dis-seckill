@@ -3,6 +3,7 @@ package com.seckill.dis.goods.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix;
 import com.seckill.dis.common.api.cache.vo.SkKeyPrefix;
 import com.seckill.dis.common.api.goods.GoodsServiceApi;
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
@@ -64,7 +65,12 @@ public class SeckillServiceImpl implements SeckillServiceApi {
             return null;
         }
         // 2. 生成订单；向 order_info 表和 seckill_order 表中写入订单信息
-        return orderService.createOrder(user, goods);
+        OrderInfo order = orderService.createOrder(user, goods);
+        // 3. 更新缓存中的库存信息
+        GoodsVo good = goodsService.getGoodsVoByGoodsId(goods.getId());
+        redisService.set(GoodsKeyPrefix.GOODS_STOCK, "" + good.getId(), good.getStockCount());
+
+        return order;
     }
 
     /**

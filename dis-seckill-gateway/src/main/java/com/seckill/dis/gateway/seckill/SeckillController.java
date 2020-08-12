@@ -168,7 +168,7 @@ public class SeckillController implements InitializingBean {
         message.setUser(user);
         message.setGoodsId(goodsId);
 
-        // 放入MQ
+        // 放入MQ(对秒杀请求异步处理，直接返回)
         sender.sendSkMessage(message);
 
         // 排队中

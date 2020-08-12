@@ -84,7 +84,6 @@ public class OrderServiceImpl implements OrderServiceApi {
         logger.debug("将秒杀订单插入 seckill_order 表中");
 
         // 将秒杀订单概要信息存储于redis中
-//        redisService.set(OrderKeyPrefix.getSeckillOrderByUidGid, ":" + user.getUuid() + "_" + goods.getId(), seckillOrder);
         redisService.set(OrderKeyPrefix.SK_ORDER, ":" + user.getUuid() + "_" + goods.getId(), seckillOrder);
 
         return orderInfo;

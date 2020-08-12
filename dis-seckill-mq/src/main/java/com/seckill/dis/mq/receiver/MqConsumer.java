@@ -1,6 +1,7 @@
 package com.seckill.dis.mq.receiver;
 
 import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix;
 import com.seckill.dis.common.api.cache.vo.OrderKeyPrefix;
 import com.seckill.dis.common.api.goods.GoodsServiceApi;
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
