@@ -36,7 +36,7 @@
         <mybatis.version>2.0.1</mybatis.version>
         <mysql.vsersion>8.0.28</mysql.vsersion>
         <druid.version>1.0.5</druid.version>
-        <dubbo.version>2.7.1</dubbo.version>
+        <dubbo.version>2.7.15</dubbo.version>
         <fastjson.version>1.2.38</fastjson.version>
         <top-version>1.0.0</top-version>
     </properties>
