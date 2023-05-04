@@ -37,7 +37,7 @@
         <mysql.vsersion>8.0.28</mysql.vsersion>
         <druid.version>1.0.5</druid.version>
         <dubbo.version>2.7.1</dubbo.version>
-        <fastjson.version>1.2.38</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <top-version>1.0.0</top-version>
     </properties>
 
